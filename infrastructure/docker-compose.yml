@@ -1,0 +1,66 @@
+# FloodBlast — Docker Compose Development Environment
+# PostgreSQL 16 + PostGIS 3.4, Redis 7, MinIO (S3-compatible object storage)
+
+services:
+  # ─── PostgreSQL + PostGIS ──────────────────────────────────────────────────────
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: floodblast-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: floodblast
+      POSTGRES_USER: floodblast_user
+      POSTGRES_PASSWORD: floodblast_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./seed-data/init-db.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U floodblast_user -d floodblast"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Redis ─────────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: floodblast-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── MinIO (S3-compatible Object Storage for media) ────────────────────────────
+  minio:
+    image: minio/minio:latest
+    container_name: floodblast-minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: floodblast_minio
+      MINIO_ROOT_PASSWORD: floodblast_minio_secret
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # Console UI
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  minio_data:
+    driver: local
