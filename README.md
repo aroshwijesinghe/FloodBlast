@@ -236,7 +236,13 @@
 - [ ] **NFR-ACC-01: High-Stress Accessibility:** Minimum touch target size of 48×48 dp, high-contrast iconography, and colorblind-safe marker palettes.
 
 ---
+## 🚀 Planned Enhancements & Extra Features
 
+### 📴 Extra: Offline Information Cache (Zero-Connectivity Mode)
+To ensure user safety during severe network blackouts, the system utilizes robust local caching mechanisms (via Service Workers and local storage). Essential offline data—such as national emergency hotlines, basic first-aid guidelines, and previously loaded safe-zone map fragments—are stored directly on the device. This ensures that users always have access to life-saving baseline information, even when mobile data and cellular networks are completely disconnected.
+
+### 🏅 Volunteer Incentives (Gamification & Badges)
+To encourage continuous and accurate community participation, the platform introduces reputation-based rewards. Users who consistently provide verified disaster updates, confirm road clearances, or fulfill relief pledges can earn digital badges (e.g., "Trusted Responder") and higher reputation multipliers. This not only boosts user engagement but also organically improves the accuracy and reliability of the crowdsourced data.
 ## 4. Technical Architecture Stack
 
 ```text
