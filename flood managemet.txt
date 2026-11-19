@@ -1,0 +1,38 @@
+locate the victims (crud)-peoples type(pregnangt,medical wanted peoples),request type(medical ,food),current "vagakiwayuthu " officer
+
+google map concept for lie detetction
+
+emergency contact numbers show relevant to location and accident type
+
+photo uploading feature relevant to location
+
+food queue for 3 time per day and vistributing system(baraganna widiha)
+
+contact persons relevant to pandemic location 
+
+logging system for advanced user(food,medi provider) ,another user can work without login
+
+
+donators section -food,boat,off road vehicles abailability post
+
+
+trusted user(has organization power)
+
+ask to expose contact details when anyone publishing anything
+
+reseach ask questions via gps (can or not)
+
+add road broken caregory 
+
+ability to add safe places with image
+
+show safety places 
+
+add at least one image when adding senarios
+
+give priority to text and othe data,last one is images
+
+
+make tickect closing option(with others contribution)
+
+in project section can view all users in pandemic centers and who are dealears
