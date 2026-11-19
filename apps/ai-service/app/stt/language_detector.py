@@ -1,0 +1,1 @@
+﻿# Detect language before transcribing

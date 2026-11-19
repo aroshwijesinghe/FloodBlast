@@ -1,0 +1,20 @@
+# ── Also add root-level .dockerignore so multi-stage builds from root are lean ─
+node_modules
+**/node_modules
+**/.git
+**/dist
+**/build
+**/.env
+**/.env.*
+!**/.env.example
+**/coverage
+**/*.md
+**/docs
+**/.vscode
+**/.idea
+**/Thumbs.db
+**/.DS_Store
+# Flutter build artifacts
+apps/mobile/.dart_tool
+apps/mobile/build
+apps/mobile/.flutter-plugins*

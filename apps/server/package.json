@@ -40,7 +40,12 @@
     "rxjs": "^7.8.1",
     "socket.io": "^4.7.0",
     "typeorm": "^0.3.17",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "@socket.io/redis-adapter": "^8.3.0",
+    "redis": "^4.6.0",
+    "bullmq": "^5.0.0",
+    "@nestjs/bull": "^10.0.0",
+    "@nestjs/schedule": "^4.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

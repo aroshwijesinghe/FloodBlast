@@ -1,0 +1,2 @@
+﻿-- Safe places seed data
+

@@ -1,0 +1,33 @@
+# Node
+node_modules
+npm-debug.log*
+
+# Build output (gets rebuilt in Docker)
+dist
+build
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Dev tools
+.git
+.gitignore
+.eslintrc*
+.prettierrc*
+*.spec.*
+test/
+tests/
+
+# Editor
+.vscode
+.idea
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docs
+*.md

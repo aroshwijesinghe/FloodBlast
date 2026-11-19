@@ -1,0 +1,43 @@
+# Node
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+dist
+build
+coverage
+
+# Source maps (included in dist already)
+*.js.map
+
+# TypeScript
+*.tsbuildinfo
+
+# Environment files (never bake secrets into image)
+.env
+.env.*
+!.env.example
+
+# Dev tools
+.git
+.gitignore
+.eslintrc*
+.prettierrc*
+*.spec.ts
+test/
+tests/
+
+# Editor
+.vscode
+.idea
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docs
+*.md
+docs/

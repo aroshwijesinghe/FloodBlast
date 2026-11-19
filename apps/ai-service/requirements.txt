@@ -1,0 +1,13 @@
+﻿fastapi
+uvicorn
+openai-whisper
+sentence-transformers
+spacy
+transformers
+torch
+bull
+redis
+sqlalchemy
+psycopg2-binary
+python-dotenv
+

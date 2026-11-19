@@ -1,0 +1,12 @@
+﻿{
+  "name": "floodblast",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev:server": "cd apps/server && npm run start:dev",
+    "dev:web": "cd apps/web-dashboard && npm run dev",
+    "dev:ai": "cd apps/ai-service && uvicorn main:app --reload",
+    "docker:up": "cd infrastructure && docker-compose up -d",
+    "docker:down": "cd infrastructure && docker-compose down"
+  }
+}
