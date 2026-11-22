@@ -9,15 +9,16 @@ import {
   KeyRound,
   Layers,
   LogOut,
-  MapPin,
   Package,
   Radio,
   ShieldCheck,
   Waves,
 } from "lucide-react";
 
-import { Terrain } from "./Terrain";
+import { LoginAtlas } from "./LoginAtlas";
+import { DisasterMap } from "./DisasterMap";
 import "./operations.css";
+import "./login-atlas.css";
 
 const email = "officer@floodblast.test",
   password = "FloodDemo24!";
@@ -52,6 +53,20 @@ const initial: Record<Section, Entry[]> = {
       detail: "Field team confirmed a blocked access road.",
       status: "Verified",
     },
+    {
+      id: "INC-103",
+      name: "Landslide blocks hillside road",
+      district: "Badulla",
+      detail: "A field team has marked the affected road and is checking alternate access.",
+      status: "Verified",
+    },
+    {
+      id: "INC-104",
+      name: "Flash flooding near residential streets",
+      district: "Batticaloa",
+      detail: "Reports of street flooding are awaiting field verification.",
+      status: "Reported",
+    },
   ],
   Relief: [
     {
@@ -61,6 +76,20 @@ const initial: Record<Section, Entry[]> = {
       detail: "80 meal packs requested for the community shelter.",
       status: "Requested",
     },
+    {
+      id: "REL-102",
+      name: "Drinking water delivery",
+      district: "Kalutara",
+      detail: "120 bottles pledged for the school relief center.",
+      status: "Pledged",
+    },
+    {
+      id: "REL-103",
+      name: "Blankets and sleeping mats",
+      district: "Badulla",
+      detail: "25 blankets and 25 sleeping mats delivered to the reception hall.",
+      status: "Delivered",
+    },
   ],
   Shelters: [
     {
@@ -68,6 +97,20 @@ const initial: Record<Section, Entry[]> = {
       name: "Community reception hall",
       district: "Gampaha",
       detail: "42 of 80 places occupied · Drinking water available",
+      status: "Open",
+    },
+    {
+      id: "SH-102",
+      name: "School relief center",
+      district: "Kalutara",
+      detail: "50 of 50 places occupied · Accessible entrance",
+      status: "At capacity",
+    },
+    {
+      id: "SH-103",
+      name: "Hillside community reception hall",
+      district: "Badulla",
+      detail: "18 of 40 places occupied · Bedding available",
       status: "Open",
     },
   ],
@@ -79,8 +122,44 @@ const initial: Record<Section, Entry[]> = {
       detail: "Demo contact · Operations liaison",
       status: "Duty contact",
     },
+    {
+      id: "CT-102",
+      name: "Shelter coordination desk",
+      district: "Gampaha",
+      detail: "Shelter intake and capacity · gampaha-shelters@example.com",
+      status: "Duty contact",
+    },
+    {
+      id: "CT-103",
+      name: "Road clearance liaison",
+      district: "Badulla",
+      detail: "Road closures and clearance updates · badulla-roads@example.com",
+      status: "Off duty",
+    },
+    {
+      id: "CT-104",
+      name: "Flood response desk",
+      district: "Batticaloa",
+      detail: "Flood reports and response coordination · batticaloa-response@example.com",
+      status: "Duty contact",
+    },
   ],
 };
+
+function loadRecords(): Record<Section, Entry[]> {
+  const saved: Record<Section, Entry[]> | null = JSON.parse(
+    localStorage.getItem("fb.records") || "null",
+  );
+  if (!saved) return initial;
+
+  // Add missing samples without overwriting saved records or status changes.
+  for (const section of sections) {
+    const rows = saved[section] || [];
+    const ids = new Set(rows.map(({ id }) => id));
+    saved[section] = [...rows, ...initial[section].filter(({ id }) => !ids.has(id))];
+  }
+  return saved;
+}
 function Brand() {
   return (
     <div className="fb-brand">
@@ -137,30 +216,7 @@ function Login({ enter }: { enter: (name: string) => void }) {
         </small>
       </header>
       <div className="login-grid">
-        <section className="atlas">
-          <Terrain />
-          <div className="atlas-body">
-            <div className="map-label">
-              <Radio size={15} /> OPERATIONS ATLAS
-            </div>
-            <h1>
-              Flood response
-              <br />
-              coordination<span>.</span>
-            </h1>
-            <p>Sri Lanka operations center</p>
-          </div>
-          <div className="pin">
-            <b />
-            <span>Kelani basin</span>
-          </div>
-          <div className="atlas-foot">
-            <span>
-              <MapPin size={14} /> Western Province
-            </span>
-            <code>06°56′ N · 79°51′ E</code>
-          </div>
-        </section>
+        <LoginAtlas />
         <section className="auth">
           <div className="auth-inner">
             <ShieldCheck className="shield" />
@@ -176,6 +232,7 @@ function Login({ enter }: { enter: (name: string) => void }) {
                 <input
                   required
                   type="email"
+                  autoComplete="username"
                   value={mail}
                   placeholder="officer@example.com"
                   onChange={(e) => setMail(e.target.value)}
@@ -183,9 +240,10 @@ function Login({ enter }: { enter: (name: string) => void }) {
               </label>
               <label>
                 Password
-                <div className="pass">
+                <span className="pass">
                   <input
                     type={show ? "text" : "password"}
+                    autoComplete={signup ? "new-password" : "current-password"}
                     required
                     minLength={signup ? 8 : 1}
                     value={pass}
@@ -196,12 +254,12 @@ function Login({ enter }: { enter: (name: string) => void }) {
                   />
                   <button
                     type="button"
-                    aria-label="Toggle password visibility"
+                    aria-label={show ? "Hide password" : "Show password"}
                     onClick={() => setShow(!show)}
                   >
                     {show ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
-                </div>
+                </span>
               </label>
               {error && <p role="alert">{error}</p>}
               <button className="primary">
@@ -211,7 +269,7 @@ function Login({ enter }: { enter: (name: string) => void }) {
             </form>
             <div className="creds">
               <b>
-                <KeyRound size={14} /> Developer credentials
+                <KeyRound size={14} /> Demo credentials
               </b>
               <code>
                 {email}
@@ -226,7 +284,7 @@ function Login({ enter }: { enter: (name: string) => void }) {
                   setError("");
                 }}
               >
-                Fill credentials <ArrowRight size={13} />
+                Use demo account <ArrowRight size={13} />
               </button>
             </div>
             <p className="switch">
@@ -251,9 +309,7 @@ function Workspace({ leave }: { leave: () => void }) {
   const nav = (url: string) => window.location.assign(url),
     path = window.location.pathname.split("/")[1],
     section = sections.find((s) => s.toLowerCase() === path);
-  const [data, setData] = useState<Record<Section, Entry[]>>(
-      () => JSON.parse(localStorage.getItem("fb.records") || "null") || initial,
-    ),
+  const [data, setData] = useState(loadRecords),
     [query, setQuery] = useState(""),
     [adding, setAdding] = useState(false);
   function save(s: Section, rows: Entry[]) {
@@ -290,12 +346,8 @@ function Workspace({ leave }: { leave: () => void }) {
         {["Overview", ...sections].map((s) => (
           <a
             key={s}
-            end
-            to={s === "Overview" ? "/" : "/" + s.toLowerCase()}
-            onClick={() => {
-              setQuery("");
-              setAdding(false);
-            }}
+            href={s === "Overview" ? "/" : "/" + s.toLowerCase()}
+            aria-current={s === (section || "Overview") ? "page" : undefined}
           >
             {s}
           </a>
@@ -308,6 +360,7 @@ function Workspace({ leave }: { leave: () => void }) {
         <h1>{section || "Operations overview"}</h1>
         {!section ? (
           <>
+            <DisasterMap incidents={data.Incidents} />
             <div className="metrics">
               {sections.map((s, i) => {
                 const Icon = icons[i];
