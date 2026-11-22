@@ -365,7 +365,7 @@ function Workspace({ leave }: { leave: () => void }) {
         </small>
         <h1>{section || "Operations overview"}</h1>
         {section === "Relief" && <div className="humanitarian"><ReliefBoard operator={operatorToken()} /></div>}
-        {section === "Shelters" && <div className="humanitarian"><ShelterDirectory /></div>}
+        {section === "Shelters" && <div className="humanitarian"><ShelterDirectory operator={operatorToken()} /></div>}
         {!section ? (
           <>
             <DisasterMap incidents={data.Incidents} />

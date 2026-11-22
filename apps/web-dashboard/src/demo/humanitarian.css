@@ -28,3 +28,7 @@
 .shelter-choices button { width: 100%; text-align: left; }
 .shelter-choices button[aria-pressed="true"] { background: #deeee4; border-color: #70a68a; }
 .shelter-detail { margin-top: 12px; }
+.shelter-detail h4 { font-size: .94rem; font-weight: 700; }
+.facility-list { display: grid; gap: 4px; margin: 7px 0 10px; font-size: .86rem; }
+.facility-list > div { display: flex; justify-content: space-between; gap: 10px; }
+.facility-list dd { font-weight: 600; }

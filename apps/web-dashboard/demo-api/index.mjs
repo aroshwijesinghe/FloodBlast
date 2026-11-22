@@ -39,6 +39,10 @@ export function createDemoApi() {
         const body = await readJson(request);
         if (path === "donors/otp") return reply(response, 200, auth.issue(body.phone));
         if (path === "operators/sign-in") return reply(response, 200, operator.signIn(body.email, body.password));
+        if (path === "shelters/audit") {
+          operator.require(request.headers.authorization);
+          return reply(response, 200, shelters.audit(body));
+        }
         if (path === "relief/fulfillment") {
           operator.require(request.headers.authorization);
           return reply(response, 200, relief.advance(body));
