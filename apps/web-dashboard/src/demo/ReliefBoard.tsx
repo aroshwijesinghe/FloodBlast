@@ -14,6 +14,7 @@ export type ReliefRequest = {
   id: string;
   name: string;
   district: string;
+  destination?: string;
   category: string;
   unit: string;
   required: number;
@@ -99,8 +100,17 @@ export function ReliefBoard({ token, operator, onPledge }: { token?: string; ope
   const [advancing, setAdvancing] = useState(false);
 
   useEffect(() => {
-    demoRequest<ReliefRequest[]>(operator ? "relief/operations" : "relief/requests", { token: operator })
-      .then(setRequests, (failure: Error) => setError(failure.message));
+    let active = true;
+    function refresh() {
+      demoRequest<ReliefRequest[]>(operator ? "relief/operations" : "relief/requests", { token: operator })
+        .then(
+          (rows) => { if (active) setRequests(rows); },
+          (failure: Error) => { if (active) setError(failure.message); },
+        );
+    }
+    refresh();
+    window.addEventListener("focus", refresh);
+    return () => { active = false; window.removeEventListener("focus", refresh); };
   }, [operator]);
 
   function update(updated: ReliefRequest) {
@@ -136,6 +146,7 @@ export function ReliefBoard({ token, operator, onPledge }: { token?: string; ope
             {request.meal && <small>{request.window} · {request.date} · Sri Lanka time</small>}
             <h3>{request.name}</h3>
             <p>{request.district} · {request.unit}</p>
+            {request.destination && <p>{request.destination}</p>}
             <small>{request.status.replace(/_/g, " ")}</small>
             <ReliefProgress request={request} />
             {token && <PledgeForm request={request} token={token} onUpdate={update} />}

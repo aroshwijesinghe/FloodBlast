@@ -35,6 +35,10 @@ export function createDemoApi() {
       }
       const path = new URL(request.url, "http://localhost").pathname.slice(prefix.length);
       if (request.method === "GET" && path === "shelters") return reply(response, 200, shelters.list());
+      if (request.method === "GET" && path.startsWith("shelters/needs/")) {
+        operator.require(request.headers.authorization);
+        return reply(response, 200, shelters.needs(path.slice("shelters/needs/".length)));
+      }
       if (request.method === "GET" && path === "shelters/events") {
         if (shelterStreams.size >= 100) throw new HttpError(503, "Too many demo shelter streams.");
         response.writeHead(200, { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", "X-Accel-Buffering": "no" });
@@ -74,6 +78,15 @@ export function createDemoApi() {
           const shelter = shelters.updateOccupancy(body);
           broadcastShelters();
           return reply(response, 200, shelter);
+        }
+        if (path === "shelters/demographics") {
+          operator.require(request.headers.authorization);
+          return reply(response, 200, shelters.updateDemographics(body));
+        }
+        if (path === "shelters/publish-lunch") {
+          operator.require(request.headers.authorization);
+          const shelter = shelters.find(body.id);
+          return reply(response, 200, relief.publishLunch(shelter, shelters.needs(shelter.id).mealPacksPerWindow));
         }
         if (path === "relief/fulfillment") {
           operator.require(request.headers.authorization);

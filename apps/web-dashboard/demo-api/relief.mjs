@@ -63,6 +63,23 @@ export function createReliefRepository() {
         return { id, quantity, status, createdAt, name, district, unit };
       });
     },
+    publishLunch(shelter, required) {
+      if (!required) throw new HttpError(409, "Enter shelter occupancy before requesting meals.");
+      const date = colomboDate.format();
+      seedMeals(date);
+      const location = shelter.id === "gampaha-hall" ? "gampaha" : shelter.id;
+      const id = `${date}-lunch-${location}`;
+      const existing = requests.get(id);
+      if (existing && totals(existing).pledged > 0 && existing.required !== required) {
+        throw new HttpError(409, "This lunch request already has pledges. Keep its agreed quantity.");
+      }
+      const request = {
+        id, name: "Lunch parcels", district: shelter.district, destination: shelter.name,
+        meal: "lunch", window: "11:00–14:00", date, category: "food", unit: "packs", required,
+      };
+      requests.set(id, request);
+      return totals(request);
+    },
     advance({ pledgeId, status }) {
       const pledge = pledges.find(({ id }) => id === pledgeId);
       if (!pledge) throw new HttpError(404, "Pledge not found.");

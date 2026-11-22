@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { MapPin } from "lucide-react";
 import { drawMap, project, type BoundaryData, type Point } from "../DisasterMap";
 import { demoRequest } from "./api";
+import { ShelterNeeds } from "./ShelterNeeds";
 
 export type Shelter = {
   id: string;
@@ -190,6 +191,7 @@ export function ShelterDirectory({ operator }: { operator?: string }) {
               <p>{shelter.district} · Verified shelter</p>
               <Occupancy key={shelter.id} shelter={shelter} operator={operator} onUpdate={onUpdate} />
               <FacilityAudit key={shelter.id} shelter={shelter} operator={operator} onUpdate={onUpdate} />
+              {operator && <ShelterNeeds key={shelter.id} shelter={shelter} operator={operator} />}
             </article>}
           </div>
         </div>
