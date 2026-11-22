@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { demoRequest } from "./api";
 import "./humanitarian.css";
 
@@ -38,20 +38,26 @@ function PledgeForm({ request, token, onUpdate }: {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const submission = useRef<{ quantity: number; id: string }>();
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);
     setError("");
     setMessage("");
+    const amount = Number(quantity);
+    if (submission.current?.quantity !== amount) {
+      submission.current = { quantity: amount, id: crypto.randomUUID() };
+    }
     try {
       const updated = await demoRequest<ReliefRequest>("relief/pledges", {
-        body: { requestId: request.id, quantity: Number(quantity) },
+        body: { requestId: request.id, quantity: amount, submissionId: submission.current.id },
         token,
       });
       setMessage(`Pledged ${quantity} ${request.unit}.`);
       onUpdate(updated);
       setQuantity("");
+      submission.current = undefined;
     } catch (failure) {
       setError((failure as Error).message);
     } finally {

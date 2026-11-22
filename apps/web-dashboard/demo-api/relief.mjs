@@ -16,6 +16,7 @@ const colomboDate = new Intl.DateTimeFormat("en-CA", {
 export function createReliefRepository() {
   const requests = new Map(seedRequests.map((request) => [request.id, request]));
   const pledges = [];
+  const submissions = new Map();
 
   function seedMeals(date) {
     for (const { id: meal, name, required, window } of meals) {
@@ -46,17 +47,33 @@ export function createReliefRepository() {
         return { id, quantity, status, createdAt, name, district, unit };
       });
     },
-    pledge(phone, { requestId, quantity }) {
+    pledge(phone, { requestId, quantity, submissionId }) {
+      if (typeof submissionId !== "string" || !/^[\da-f-]{36}$/i.test(submissionId)) {
+        throw new HttpError(400, "A valid pledge submission reference is required.");
+      }
+      const key = `${phone}:${submissionId}`;
+      const previous = submissions.get(key);
+      if (previous) {
+        if (previous.requestId !== requestId || previous.quantity !== quantity) {
+          throw new HttpError(409, "This submission reference belongs to another pledge.");
+        }
+        return totals(requests.get(requestId));
+      }
       const request = requests.get(requestId);
       if (!request) throw new HttpError(404, "Relief request not found.");
+      if (request.date && request.date !== colomboDate.format()) {
+        throw new HttpError(409, "This meal request has closed.");
+      }
       if (!Number.isSafeInteger(quantity) || quantity < 1) {
         throw new HttpError(400, "Enter a whole quantity greater than zero.");
       }
       if (quantity > totals(request).remaining) {
         throw new HttpError(409, "That quantity exceeds the current remaining balance.");
       }
+      // Validate and write in the same synchronous operation on the demo process.
       const pledge = { id: randomUUID(), requestId, phone, quantity, status: "PLEDGED", createdAt: new Date().toISOString() };
       pledges.push(pledge);
+      submissions.set(key, pledge);
       return totals(request);
     },
   };
