@@ -19,6 +19,8 @@ export type ReliefRequest = {
   required: number;
   pledged: number;
   remaining: number;
+  status: string;
+  allocations?: { id: string; quantity: number; status: string }[];
   date?: string;
   meal?: string;
   window?: string;
@@ -90,20 +92,32 @@ function PledgeForm({ request, token, onUpdate }: {
   );
 }
 
-export function ReliefBoard({ token, onPledge }: { token?: string; onPledge?: () => void }) {
+export function ReliefBoard({ token, operator, onPledge }: { token?: string; operator?: string; onPledge?: () => void }) {
   const [requests, setRequests] = useState<ReliefRequest[]>([]);
   const [queue, setQueue] = useState("food");
   const [error, setError] = useState("");
+  const [advancing, setAdvancing] = useState(false);
 
-  function refresh() {
-    demoRequest<ReliefRequest[]>("relief/requests").then(setRequests, (failure: Error) => setError(failure.message));
-  }
-
-  useEffect(refresh, []);
+  useEffect(() => {
+    demoRequest<ReliefRequest[]>(operator ? "relief/operations" : "relief/requests", { token: operator })
+      .then(setRequests, (failure: Error) => setError(failure.message));
+  }, [operator]);
 
   function update(updated: ReliefRequest) {
     setRequests((current) => current.map((request) => request.id === updated.id ? updated : request));
     onPledge?.();
+  }
+
+  async function advance(pledgeId: string, status: string) {
+    setAdvancing(true);
+    setError("");
+    try {
+      update(await demoRequest<ReliefRequest>("relief/fulfillment", { token: operator, body: { pledgeId, status } }));
+    } catch (failure) {
+      setError((failure as Error).message);
+    } finally {
+      setAdvancing(false);
+    }
   }
 
   return (
@@ -122,8 +136,19 @@ export function ReliefBoard({ token, onPledge }: { token?: string; onPledge?: ()
             {request.meal && <small>{request.window} · {request.date} · Sri Lanka time</small>}
             <h3>{request.name}</h3>
             <p>{request.district} · {request.unit}</p>
+            <small>{request.status.replace(/_/g, " ")}</small>
             <ReliefProgress request={request} />
             {token && <PledgeForm request={request} token={token} onUpdate={update} />}
+            {operator && request.remaining === 0 && request.allocations?.map((allocation) => (
+              <div className="human-actions" key={allocation.id}>
+                <small>{allocation.quantity} {request.unit} · {allocation.status.replace(/_/g, " ")}</small>
+                {allocation.status !== "DELIVERED" && (
+                  <button type="button" className="human-action" disabled={advancing} onClick={() => advance(
+                    allocation.id, allocation.status === "PLEDGED" ? "IN_TRANSIT" : "DELIVERED",
+                  )}>{allocation.status === "PLEDGED" ? "Mark in transit" : "Confirm delivery"}</button>
+                )}
+              </div>
+            ))}
           </article>
         ))}
       </div>

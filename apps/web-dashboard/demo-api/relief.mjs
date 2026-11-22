@@ -30,18 +30,31 @@ export function createReliefRepository() {
     }
   }
 
-  function totals(request) {
-    const pledged = pledges
-      .filter(({ requestId }) => requestId === request.id)
-      .reduce((sum, { quantity }) => sum + quantity, 0);
-    return { ...request, pledged, remaining: request.required - pledged };
+  function totals(request, includeAllocations = false) {
+    const allocations = pledges.filter(({ requestId }) => requestId === request.id);
+    const pledged = allocations.reduce((sum, { quantity }) => sum + quantity, 0);
+    const remaining = request.required - pledged;
+    let status = "REQUESTED";
+    if (pledged > 0 && remaining > 0) status = "PARTIALLY_PLEDGED";
+    if (remaining === 0) {
+      status = "FULLY_PLEDGED";
+      if (allocations.every((pledge) => pledge.status === "DELIVERED")) status = "DELIVERED";
+      else if (allocations.some((pledge) => pledge.status !== "PLEDGED")) status = "IN_TRANSIT";
+    }
+    return {
+      ...request, pledged, remaining, status,
+      ...(includeAllocations && { allocations: allocations.map(({ id, quantity, status }) => ({ id, quantity, status })) }),
+    };
   }
 
   return {
-    list() {
+    list(includeAllocations = false) {
       const date = colomboDate.format();
       seedMeals(date);
-      return [...requests.values()].filter((request) => !request.date || request.date === date).map(totals);
+      return [...requests.values()]
+        .filter((request) => !request.date || request.date === date ||
+          (includeAllocations && pledges.some((pledge) => pledge.requestId === request.id && pledge.status !== "DELIVERED")))
+        .map((request) => totals(request, includeAllocations));
     },
     history(phone) {
       return pledges.filter((pledge) => pledge.phone === phone).reverse().map((pledge) => {
@@ -49,6 +62,18 @@ export function createReliefRepository() {
         const { name, district, unit } = requests.get(requestId);
         return { id, quantity, status, createdAt, name, district, unit };
       });
+    },
+    advance({ pledgeId, status }) {
+      const pledge = pledges.find(({ id }) => id === pledgeId);
+      if (!pledge) throw new HttpError(404, "Pledge not found.");
+      const request = requests.get(pledge.requestId);
+      if (status === pledge.status) return totals(request, true);
+      const next = { PLEDGED: "IN_TRANSIT", IN_TRANSIT: "DELIVERED" }[pledge.status];
+      if (!next || status !== next || totals(request).remaining !== 0) {
+        throw new HttpError(409, "Fully pledge the request, then record transit before delivery.");
+      }
+      pledge.status = status;
+      return totals(request, true);
     },
     pledge(phone, { requestId, quantity, submissionId }) {
       if (typeof submissionId !== "string" || !/^[\da-f-]{36}$/i.test(submissionId)) {

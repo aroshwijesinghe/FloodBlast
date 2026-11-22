@@ -1,6 +1,7 @@
 import { createDonorAuth } from "./auth.mjs";
 import { HttpError, readJson, reply } from "./http.mjs";
 import { createReliefRepository } from "./relief.mjs";
+import { createDemoOperator } from "./operator.mjs";
 
 const prefix = "/api/demo/";
 const loopback = new Set(["127.0.0.1", "::1", "::ffff:127.0.0.1"]);
@@ -9,6 +10,7 @@ export function createDemoApi() {
   // The local simulator delivers the code to the UI instead of sending an SMS.
   const auth = createDonorAuth((_phone, code) => ({ demoCode: code }));
   const relief = createReliefRepository();
+  const operator = createDemoOperator();
 
   return async function demoApi(request, response, next) {
     if (!request.url?.startsWith(prefix)) return next();
@@ -22,6 +24,10 @@ export function createDemoApi() {
       }
       const path = new URL(request.url, "http://localhost").pathname.slice(prefix.length);
       if (request.method === "GET" && path === "relief/requests") return reply(response, 200, relief.list());
+      if (request.method === "GET" && path === "relief/operations") {
+        operator.require(request.headers.authorization);
+        return reply(response, 200, relief.list(true));
+      }
       if (request.method === "GET" && path === "donors/pledges") {
         const donor = auth.authenticate(request.headers.authorization);
         return reply(response, 200, relief.history(donor));
@@ -29,6 +35,11 @@ export function createDemoApi() {
       if (request.method === "POST") {
         const body = await readJson(request);
         if (path === "donors/otp") return reply(response, 200, auth.issue(body.phone));
+        if (path === "operators/sign-in") return reply(response, 200, operator.signIn(body.email, body.password));
+        if (path === "relief/fulfillment") {
+          operator.require(request.headers.authorization);
+          return reply(response, 200, relief.advance(body));
+        }
         if (path === "donors/verify") return reply(response, 200, auth.verify(body.phone, body.code));
         if (path === "relief/pledges") {
           const donor = auth.authenticate(request.headers.authorization);

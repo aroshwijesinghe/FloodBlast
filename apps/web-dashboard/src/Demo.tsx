@@ -19,6 +19,7 @@ import { LoginAtlas } from "./LoginAtlas";
 import { DisasterMap } from "./DisasterMap";
 import { DonorPortal } from "./demo/DonorPortal";
 import { ReliefBoard } from "./demo/ReliefBoard";
+import { operatorToken, signInOperator, signOutOperator } from "./demo/operator";
 import "./operations.css";
 import "./login-atlas.css";
 
@@ -207,6 +208,7 @@ function Login({ enter }: { enter: (name: string) => void }) {
       setError("Check your email and password.");
       return;
     }
+    if (key === email && !signup) await signInOperator(key, pass);
     enter(key);
   }
   return (
@@ -361,7 +363,7 @@ function Workspace({ leave }: { leave: () => void }) {
           <i /> Local demo workspace
         </small>
         <h1>{section || "Operations overview"}</h1>
-        {section === "Relief" && <div className="humanitarian"><ReliefBoard /></div>}
+        {section === "Relief" && <div className="humanitarian"><ReliefBoard operator={operatorToken()} /></div>}
         {!section ? (
           <>
             <DisasterMap incidents={data.Incidents} />
@@ -463,6 +465,7 @@ export function Demo() {
   }
   return <Workspace leave={() => {
     sessionStorage.removeItem("fb.session");
+    signOutOperator();
     window.location.assign("/login");
   }} />;
 }
