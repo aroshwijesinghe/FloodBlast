@@ -16,6 +16,19 @@ export type ReliefRequest = {
   window?: string;
 };
 
+function ReliefProgress({ request }: { request: ReliefRequest }) {
+  return (
+    <div className="relief-progress">
+      <progress max={request.required} value={request.pledged} aria-label={`${request.name} pledged quantity`} />
+      <dl>
+        <div><dt>Required</dt><dd>{request.required}</dd></div>
+        <div><dt>Pledged</dt><dd>{request.pledged}</dd></div>
+        <div><dt>Remaining</dt><dd>{request.remaining}</dd></div>
+      </dl>
+    </div>
+  );
+}
+
 function PledgeForm({ request, token, onUpdate }: {
   request: ReliefRequest;
   token: string;
@@ -88,7 +101,8 @@ export function ReliefBoard({ token, onPledge }: { token?: string; onPledge?: ()
           <article className="human-card" key={request.id}>
             {request.meal && <small>{request.window} · {request.date} · Sri Lanka time</small>}
             <h3>{request.name}</h3>
-            <p>{request.district} · {request.remaining} {request.unit} still needed</p>
+            <p>{request.district} · {request.unit}</p>
+            <ReliefProgress request={request} />
             {token && <PledgeForm request={request} token={token} onUpdate={update} />}
           </article>
         ))}
