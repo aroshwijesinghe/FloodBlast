@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { demoRequest } from "./api";
+import { ReliefBoard } from "./ReliefBoard";
 import "./humanitarian.css";
 
 type Donor = { phone: string; token: string };
@@ -78,6 +79,7 @@ export function DonorPortal() {
             </form>
           </section>
         )}
+        {donor && <ReliefBoard token={donor.token} />}
       </div>
     </main>
   );

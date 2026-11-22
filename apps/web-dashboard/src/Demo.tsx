@@ -18,6 +18,7 @@ import {
 import { LoginAtlas } from "./LoginAtlas";
 import { DisasterMap } from "./DisasterMap";
 import { DonorPortal } from "./demo/DonorPortal";
+import { ReliefBoard } from "./demo/ReliefBoard";
 import "./operations.css";
 import "./login-atlas.css";
 
@@ -360,6 +361,7 @@ function Workspace({ leave }: { leave: () => void }) {
           <i /> Local demo workspace
         </small>
         <h1>{section || "Operations overview"}</h1>
+        {section === "Relief" && <div className="humanitarian"><ReliefBoard /></div>}
         {!section ? (
           <>
             <DisasterMap incidents={data.Incidents} />

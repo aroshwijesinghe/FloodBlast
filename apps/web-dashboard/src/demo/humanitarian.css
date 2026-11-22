@@ -11,3 +11,5 @@
 .human-action { padding: 9px 12px; border: 1px solid #bdd0c4; border-radius: 8px; background: #f1f7f3; color: #184d39; }
 .human-link { color: #185c48; text-decoration: underline; text-underline-offset: 3px; }
 .humanitarian .human-panel > .human-action { margin-left: 12px; }
+.human-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); margin-top: 12px; }
+.human-card { display: grid; align-content: start; gap: 8px; padding: 14px; border-radius: 10px; border: 1px solid #d6e4db; background: #f8fbf9; }
