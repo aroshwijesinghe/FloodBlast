@@ -1,9 +1,9 @@
 import { HttpError } from "./http.mjs";
 
 const seeds = [
-  { id: "gampaha-hall", name: "Community reception hall", district: "Gampaha", point: [80.01, 7.09], verified: true },
-  { id: "kalutara-school", name: "School relief center", district: "Kalutara", point: [79.99, 6.59], verified: true },
-  { id: "badulla-hall", name: "Hillside community reception hall", district: "Badulla", point: [81.06, 6.99], verified: true },
+  { id: "gampaha-hall", name: "Community reception hall", district: "Gampaha", point: [80.01, 7.09], verified: true, capacity: 300, occupancy: 200 },
+  { id: "kalutara-school", name: "School relief center", district: "Kalutara", point: [79.99, 6.59], verified: true, capacity: 50, occupancy: 50 },
+  { id: "badulla-hall", name: "Hillside community reception hall", district: "Badulla", point: [81.06, 6.99], verified: true, capacity: 40, occupancy: 18 },
 ];
 const facilityKeys = ["water", "generator", "sanitation", "kitchen", "medical", "accessibility"];
 const allowedReadiness = new Set(["READY", "UNAVAILABLE", "UNKNOWN"]);
@@ -30,6 +30,15 @@ export function createShelterRepository() {
   return {
     list: () => [...shelters.values()].filter(({ verified }) => verified),
     find,
+    updateOccupancy({ id, capacity, occupancy }) {
+      const shelter = find(id);
+      if (!Number.isSafeInteger(capacity) || capacity < 1 || capacity > 100_000 ||
+          !Number.isSafeInteger(occupancy) || occupancy < 0 || occupancy > 100_000) {
+        throw new HttpError(400, "Enter a positive capacity and a non-negative occupant count, up to 100,000.");
+      }
+      Object.assign(shelter, { capacity, occupancy, occupancyAt: new Date().toISOString() });
+      return shelter;
+    },
     audit({ id, facilities }) {
       const shelter = find(id);
       if (!facilities || !facilityKeys.every((key) => allowedReadiness.has(facilities[key]))) {

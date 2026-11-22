@@ -11,6 +11,8 @@ export type Shelter = {
   verified: boolean;
   facilities: Record<string, string>;
   auditedAt: string | null;
+  capacity: number;
+  occupancy: number;
 };
 
 const facilities = [
@@ -139,9 +141,23 @@ export function ShelterDirectory({ operator }: { operator?: string }) {
   const [shelters, setShelters] = useState<Shelter[]>();
   const [selected, setSelected] = useState("");
   const [error, setError] = useState("");
+  const [live, setLive] = useState(false);
 
   useEffect(() => {
-    demoRequest<Shelter[]>("shelters").then(setShelters, (failure: Error) => setError(failure.message));
+    let receivedSnapshot = false;
+    demoRequest<Shelter[]>("shelters").then(
+      (rows) => { if (!receivedSnapshot) setShelters(rows); },
+      (failure: Error) => { if (!receivedSnapshot) setError(failure.message); },
+    );
+    const events = new EventSource("/api/demo/shelters/events");
+    events.onmessage = ({ data }) => {
+      receivedSnapshot = true;
+      setShelters(JSON.parse(data) as Shelter[]);
+      setLive(true);
+      setError("");
+    };
+    events.onerror = () => setLive(false);
+    return () => { receivedSnapshot = true; events.close(); };
   }, []);
 
   const shelter = shelters?.find(({ id }) => id === selected) ?? shelters?.[0];
@@ -153,6 +169,7 @@ export function ShelterDirectory({ operator }: { operator?: string }) {
   return (
     <section className="human-panel" aria-labelledby="shelter-title">
       <h2 id="shelter-title">Verified evacuation shelters</h2>
+      <p>{live ? "Live occupancy updates connected" : "Waiting for live occupancy updates"}</p>
       {error && <p role="alert">{error}</p>}
       {!error && !shelters && <p role="status">Loading shelters…</p>}
       {shelters && (
@@ -171,11 +188,60 @@ export function ShelterDirectory({ operator }: { operator?: string }) {
             {shelter && <article className="human-card shelter-detail">
               <h3>{shelter.name}</h3>
               <p>{shelter.district} · Verified shelter</p>
+              <Occupancy key={shelter.id} shelter={shelter} operator={operator} onUpdate={onUpdate} />
               <FacilityAudit key={shelter.id} shelter={shelter} operator={operator} onUpdate={onUpdate} />
             </article>}
           </div>
         </div>
       )}
     </section>
+  );
+}
+
+function Occupancy({ shelter, operator, onUpdate }: {
+  shelter: Shelter;
+  operator?: string;
+  onUpdate: (shelter: Shelter) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const free = shelter.capacity - shelter.occupancy;
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    setBusy(true);
+    const data = new FormData(event.currentTarget);
+    try {
+      onUpdate(await demoRequest<Shelter>("shelters/occupancy", {
+        token: operator,
+        body: { id: shelter.id, capacity: Number(data.get("capacity")), occupancy: Number(data.get("occupancy")) },
+      }));
+      setEditing(false);
+    } catch (failure) {
+      setError((failure as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="relief-progress">
+      <h4>Occupancy</h4>
+      <progress max={shelter.capacity} value={Math.min(shelter.capacity, shelter.occupancy)} aria-label="Shelter occupancy" />
+      <p>{shelter.occupancy} of {shelter.capacity} places occupied · {free < 0 ? `${-free} over capacity` : `${free} available`}</p>
+      {editing ? (
+        <form className="human-form" onSubmit={submit}>
+          <label>Capacity<input required name="capacity" type="number" min="1" max="100000" defaultValue={shelter.capacity} /></label>
+          <label>Current occupancy<input required name="occupancy" type="number" min="0" max="100000" defaultValue={shelter.occupancy} /></label>
+          {error && <p role="alert">{error}</p>}
+          <div className="human-actions">
+            <button className="primary" disabled={busy}>Save occupancy</button>
+            <button type="button" className="human-action" disabled={busy} onClick={() => setEditing(false)}>Cancel</button>
+          </div>
+        </form>
+      ) : operator && <button type="button" className="human-action" onClick={() => { setError(""); setEditing(true); }}>Update occupancy</button>}
+    </div>
   );
 }

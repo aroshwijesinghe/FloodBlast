@@ -13,6 +13,15 @@ export function createDemoApi() {
   const relief = createReliefRepository();
   const operator = createDemoOperator();
   const shelters = createShelterRepository();
+  const shelterStreams = new Set();
+
+  function broadcastShelters() {
+    const event = `data: ${JSON.stringify(shelters.list())}\n\n`;
+    for (const stream of shelterStreams) {
+      if (stream.writableNeedDrain) stream.end();
+      else stream.write(event);
+    }
+  }
 
   return async function demoApi(request, response, next) {
     if (!request.url?.startsWith(prefix)) return next();
@@ -26,6 +35,21 @@ export function createDemoApi() {
       }
       const path = new URL(request.url, "http://localhost").pathname.slice(prefix.length);
       if (request.method === "GET" && path === "shelters") return reply(response, 200, shelters.list());
+      if (request.method === "GET" && path === "shelters/events") {
+        if (shelterStreams.size >= 100) throw new HttpError(503, "Too many demo shelter streams.");
+        response.writeHead(200, { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", "X-Accel-Buffering": "no" });
+        response.write(`data: ${JSON.stringify(shelters.list())}\n\n`);
+        shelterStreams.add(response);
+        const heartbeat = setInterval(() => {
+          if (response.writableNeedDrain) response.end();
+          else response.write(": heartbeat\n\n");
+        }, 20_000);
+        response.once("close", () => {
+          shelterStreams.delete(response);
+          clearInterval(heartbeat);
+        });
+        return;
+      }
       if (request.method === "GET" && path === "relief/requests") return reply(response, 200, relief.list());
       if (request.method === "GET" && path === "relief/operations") {
         operator.require(request.headers.authorization);
@@ -41,7 +65,15 @@ export function createDemoApi() {
         if (path === "operators/sign-in") return reply(response, 200, operator.signIn(body.email, body.password));
         if (path === "shelters/audit") {
           operator.require(request.headers.authorization);
-          return reply(response, 200, shelters.audit(body));
+          const shelter = shelters.audit(body);
+          broadcastShelters();
+          return reply(response, 200, shelter);
+        }
+        if (path === "shelters/occupancy") {
+          operator.require(request.headers.authorization);
+          const shelter = shelters.updateOccupancy(body);
+          broadcastShelters();
+          return reply(response, 200, shelter);
         }
         if (path === "relief/fulfillment") {
           operator.require(request.headers.authorization);
