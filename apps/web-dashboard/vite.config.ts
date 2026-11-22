@@ -10,6 +10,14 @@ export default defineConfig({
       server.middlewares.use(createDemoApi());
     },
   }],
+  server: {
+    proxy: {
+      '/api/forecast': {
+        target: 'http://127.0.0.1:8000',
+        rewrite: () => '/forecast/resources',
+      },
+    },
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

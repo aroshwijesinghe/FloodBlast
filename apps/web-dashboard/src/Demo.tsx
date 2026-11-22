@@ -20,6 +20,7 @@ import { DisasterMap } from "./DisasterMap";
 import { DonorPortal } from "./demo/DonorPortal";
 import { ReliefBoard } from "./demo/ReliefBoard";
 import { ShelterDirectory } from "./demo/ShelterDirectory";
+import { DistrictForecast } from "./demo/DistrictForecast";
 import { operatorToken, signInOperator, signOutOperator } from "./demo/operator";
 import "./operations.css";
 import "./login-atlas.css";
@@ -340,6 +341,7 @@ function Workspace({ leave }: { leave: () => void }) {
     setAdding(false);
   }
   const icons = [Activity, Package, Layers, Radio];
+  const forecast = path === "forecast";
   return (
     <main className="workspace">
       <header>
@@ -353,20 +355,22 @@ function Workspace({ leave }: { leave: () => void }) {
           <a
             key={s}
             href={s === "Overview" ? "/" : "/" + s.toLowerCase()}
-            aria-current={s === (section || "Overview") ? "page" : undefined}
+            aria-current={!forecast && s === (section || "Overview") ? "page" : undefined}
           >
             {s}
           </a>
         ))}
+        <a href="/forecast" aria-current={forecast ? "page" : undefined}>Forecast</a>
       </nav>
       <div className="work-body">
         <small>
           <i /> Local demo workspace
         </small>
-        <h1>{section || "Operations overview"}</h1>
+        <h1>{forecast ? "District forecasting" : section || "Operations overview"}</h1>
+        {forecast && <div className="humanitarian"><DistrictForecast /></div>}
         {section === "Relief" && <div className="humanitarian"><ReliefBoard operator={operatorToken()} /></div>}
         {section === "Shelters" && <div className="humanitarian"><ShelterDirectory operator={operatorToken()} /></div>}
-        {!section ? (
+        {!forecast && (!section ? (
           <>
             <DisasterMap incidents={data.Incidents} />
             <div className="metrics">
@@ -396,7 +400,7 @@ function Workspace({ leave }: { leave: () => void }) {
               {adding ? "Cancel" : "+ Add record"}
             </button>
           </div>
-        )}
+        ))}
         {adding && section && (
           <form className="entry" onSubmit={add}>
             {["name", "district", "detail"].map((n) => (
@@ -410,7 +414,7 @@ function Workspace({ leave }: { leave: () => void }) {
             </button>
           </form>
         )}
-        <div className="records">
+        {!forecast && <div className="records">
           {data[section || "Incidents"]
             .filter((r) =>
               (r.name + " " + r.district)
@@ -452,7 +456,7 @@ function Workspace({ leave }: { leave: () => void }) {
               .toLowerCase()
               .includes(query.toLowerCase()),
           ) && <p>No matching records.</p>}
-        </div>
+        </div>}
       </div>
     </main>
   );
