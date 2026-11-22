@@ -1,0 +1,355 @@
+﻿:root {
+  font-family: Inter, "Segoe UI", sans-serif;
+  color: #173c37;
+  background: #e8f0eb;
+  font-synthesis: none;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+input,
+select {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+button,
+a,
+input,
+select {
+  outline-offset: 4px;
+}
+button {
+  border: 0;
+}
+header,
+.tools,
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.login,
+.workspace {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 88% 72%, #c5e1d8, transparent 48%),
+    linear-gradient(130deg, #f3f5ef, #e0eae6);
+  padding: 0 clamp(18px, 5vw, 90px) 4vh;
+}
+header {
+  max-width: 1450px;
+  margin: auto;
+  height: 88px;
+}
+.fb-brand,
+header small,
+.map-label,
+.creds b,
+button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+.fb-brand {
+  font-size: 24px;
+  font-weight: 750;
+  letter-spacing: -1.3px;
+}
+.fb-brand > span,
+.shield {
+  color: #d6fff0;
+  background: #16584b;
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow:
+    inset 0 1px 2px #89b7a5,
+    0 3px 6px #234b3920;
+}
+.fb-brand span {
+  display: grid;
+}
+small {
+  font-size: 12px;
+  font-weight: 600;
+}
+i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #338e6a;
+  margin-right: 4px;
+}
+.login-grid {
+  max-width: 1450px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1.12fr 1fr;
+  min-height: min(730px, 80vh);
+  border: 1px solid #fff;
+  border-radius: 26px;
+  overflow: hidden;
+  background: #ffffff82;
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 20px 60px #234d3c1a,
+    inset 0 1px 1px white;
+}
+code {
+  font-family: Consolas, monospace;
+}
+.auth {
+  display: grid;
+  place-items: center;
+  padding: clamp(25px, 4vw, 75px);
+}
+.auth-inner {
+  width: 100%;
+  max-width: 380px;
+}
+.shield {
+  width: 41px;
+  height: 41px;
+  background: #dcebe0;
+  color: #286247;
+}
+.auth h2,
+.work-body h1 {
+  letter-spacing: -0.055em;
+  font-size: clamp(32px, 3vw, 54px);
+  line-height: 1.1;
+  margin: 18px 0 8px;
+  font-weight: 730;
+}
+.auth p,
+.records p {
+  font-size: 14px;
+  color: #526b62;
+}
+.auth form {
+  margin: 28px 0 15px;
+}
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 650;
+  margin: 13px 0 6px;
+}
+.auth input,
+input,
+select {
+  width: 100%;
+  display: block;
+  margin-top: 7px;
+  border: 1px solid #c9d9d0;
+  background: #f6faf6;
+  border-radius: 9px;
+  color: #163e32;
+  padding: 12px 14px;
+  box-shadow: inset 0 2px 4px #183c3010;
+}
+.pass {
+  position: relative;
+  margin-top: 7px;
+}
+.auth .pass input {
+  margin-top: 0;
+  padding-right: 44px;
+}
+.pass button {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  padding: 6px;
+  color: #536e61;
+}
+.primary {
+  background: #185c48;
+  color: white;
+  border-radius: 9px;
+  padding: 12px 18px;
+  font-weight: 650;
+  box-shadow:
+    inset 0 1px 1px #a4cbb0,
+    0 3px 5px #20443322;
+}
+.auth .primary {
+  width: 100%;
+  justify-content: center;
+  margin-top: 15px;
+}
+.creds {
+  background: #dfece2a8;
+  border: 1px solid #c5d8c9;
+  border-radius: 11px;
+  padding: 13px 16px;
+  display: grid;
+  gap: 6px;
+}
+.creds b,
+.creds code,
+.creds button,
+.switch button {
+  font-size: 12px;
+}
+.creds button,
+.switch button {
+  background: transparent;
+  color: #15563f;
+  font-weight: bold;
+  padding: 0;
+}
+.switch {
+  text-align: center;
+}
+.workspace header button,
+nav a,
+.metrics button,
+.records,
+.entry {
+  background: #ffffffa6;
+  border: 1px solid #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px #1236290c;
+}
+.workspace header button {
+  padding: 10px 15px;
+}
+.workspace {
+  background: #f2f6f3;
+}
+.workspace > header,
+.workspace > nav,
+.work-body {
+  max-width: 1240px;
+  margin-inline: auto;
+}
+.workspace > header {
+  height: 72px;
+}
+.workspace > nav {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-bottom: 1px solid #d8e4dc;
+}
+.workspace nav a {
+  padding: 7px 12px;
+  border: 1px solid transparent;
+  border-radius: 7px 7px 0 0;
+  background: transparent;
+  box-shadow: none;
+  color: #264e42;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.workspace nav a[aria-current="page"] {
+  border-bottom-color: #28674f;
+  background: #e2eee7;
+  color: #164c39;
+}
+.work-body {
+  margin-block: 25px;
+}
+.workspace .work-body > h1 {
+  margin-top: 4px;
+  font-size: clamp(27px, 4vw, 40px);
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin: 28px 0 36px;
+}
+.metrics button {
+  display: grid;
+  text-align: left;
+  padding: 20px;
+  color: #24654c;
+}
+.metrics strong {
+  font-size: 33px;
+}
+.records,
+.entry {
+  padding: 12px 20px;
+}
+.records article {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 0;
+}
+.records article + article {
+  border-top: 1px solid #d6e2da;
+}
+.records article div {
+  flex: 1;
+}
+.records article h3,
+.records article p {
+  margin: 4px 0;
+}
+.records select,
+.records article span {
+  width: auto;
+  color: #18563f;
+  background: #e1efe5;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 12px;
+}
+.tools {
+  margin: 20px 0;
+}
+.tools input {
+  max-width: 340px;
+  margin: 0;
+}
+.entry {
+  margin: 16px 0;
+}
+.entry .primary {
+  margin: 12px 0;
+}
+button:hover,
+nav a:hover {
+  filter: brightness(0.95);
+}
+@media (max-width: 760px) {
+  header {
+    height: 68px;
+  }
+  .login-grid {
+    grid-template-columns: 1fr;
+  }
+  .auth {
+    padding: 24px;
+  }
+  .metrics {
+    grid-template-columns: 1fr 1fr;
+  }
+  .records article {
+    flex-wrap: wrap;
+  }
+  .workspace > nav {
+    gap: 3px;
+  }
+  .workspace nav a {
+    padding: 7px 6px;
+    font-size: 12px;
+  }
+  .work-body {
+    margin: 24px auto;
+  }
+}
