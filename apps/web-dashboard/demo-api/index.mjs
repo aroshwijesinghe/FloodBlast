@@ -22,6 +22,10 @@ export function createDemoApi() {
       }
       const path = new URL(request.url, "http://localhost").pathname.slice(prefix.length);
       if (request.method === "GET" && path === "relief/requests") return reply(response, 200, relief.list());
+      if (request.method === "GET" && path === "donors/pledges") {
+        const donor = auth.authenticate(request.headers.authorization);
+        return reply(response, 200, relief.history(donor));
+      }
       if (request.method === "POST") {
         const body = await readJson(request);
         if (path === "donors/otp") return reply(response, 200, auth.issue(body.phone));

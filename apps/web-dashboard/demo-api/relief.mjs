@@ -19,6 +19,13 @@ export function createReliefRepository() {
 
   return {
     list: () => [...requests.values()].map(totals),
+    history(phone) {
+      return pledges.filter((pledge) => pledge.phone === phone).reverse().map((pledge) => {
+        const { id, requestId, quantity, status, createdAt } = pledge;
+        const { name, district, unit } = requests.get(requestId);
+        return { id, quantity, status, createdAt, name, district, unit };
+      });
+    },
     pledge(phone, { requestId, quantity }) {
       const request = requests.get(requestId);
       if (!request) throw new HttpError(404, "Relief request not found.");

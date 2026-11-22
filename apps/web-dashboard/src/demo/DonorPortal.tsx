@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { demoRequest } from "./api";
 import { ReliefBoard } from "./ReliefBoard";
+import { DonorHistory } from "./DonorHistory";
 import "./humanitarian.css";
 
 type Donor = { phone: string; token: string };
@@ -14,6 +15,7 @@ export function DonorPortal() {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [revision, setRevision] = useState(0);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -79,7 +81,10 @@ export function DonorPortal() {
             </form>
           </section>
         )}
-        {donor && <ReliefBoard token={donor.token} />}
+        {donor && <>
+          <ReliefBoard token={donor.token} onPledge={() => setRevision((value) => value + 1)} />
+          <DonorHistory token={donor.token} revision={revision} />
+        </>}
       </div>
     </main>
   );

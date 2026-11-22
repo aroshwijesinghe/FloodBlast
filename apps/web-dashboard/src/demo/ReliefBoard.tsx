@@ -60,7 +60,7 @@ function PledgeForm({ request, token, onUpdate }: {
   );
 }
 
-export function ReliefBoard({ token }: { token?: string }) {
+export function ReliefBoard({ token, onPledge }: { token?: string; onPledge?: () => void }) {
   const [requests, setRequests] = useState<ReliefRequest[]>([]);
   const [error, setError] = useState("");
 
@@ -72,6 +72,7 @@ export function ReliefBoard({ token }: { token?: string }) {
 
   function update(updated: ReliefRequest) {
     setRequests((current) => current.map((request) => request.id === updated.id ? updated : request));
+    onPledge?.();
   }
 
   return (
