@@ -17,6 +17,7 @@ import {
 
 import { LoginAtlas } from "./LoginAtlas";
 import { DisasterMap } from "./DisasterMap";
+import { DonorPortal } from "./demo/DonorPortal";
 import "./operations.css";
 import "./login-atlas.css";
 
@@ -299,6 +300,7 @@ function Login({ enter }: { enter: (name: string) => void }) {
                 {signup ? "Sign in" : "Sign up"}
               </button>
             </p>
+            <p className="switch"><a className="human-link" href="/donor">Donor portal</a></p>
           </div>
         </section>
       </div>
@@ -450,6 +452,7 @@ function Workspace({ leave }: { leave: () => void }) {
   );
 }
 export function Demo() {
+  if (window.location.pathname === "/donor") return <DonorPortal />;
   if (!sessionStorage.getItem("fb.session")) {
     return <Login enter={name => {
       sessionStorage.setItem("fb.session", name);

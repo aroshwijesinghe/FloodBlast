@@ -1,0 +1,13 @@
+.humanitarian { color: #193831; }
+.humanitarian h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
+.humanitarian h3 { font-weight: 700; }
+.humanitarian p { color: #405d52; }
+.humanitarian [role="alert"] { color: #8f3026; }
+.human-panel { padding: clamp(16px, 3vw, 24px); border: 1px solid #ccddd2; border-radius: 14px; background: #fff; margin: 14px 0; }
+.human-form { display: grid; gap: 10px; max-width: 420px; }
+.human-form label { margin: 0; }
+.human-form input, .human-form select { margin-top: 5px; min-height: 48px; padding: 8px 12px; }
+.human-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.human-action { padding: 9px 12px; border: 1px solid #bdd0c4; border-radius: 8px; background: #f1f7f3; color: #184d39; }
+.human-link { color: #185c48; text-decoration: underline; text-underline-offset: 3px; }
+.humanitarian .human-panel > .human-action { margin-left: 12px; }
