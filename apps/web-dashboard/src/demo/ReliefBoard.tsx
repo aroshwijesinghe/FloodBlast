@@ -2,6 +2,14 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { demoRequest } from "./api";
 import "./humanitarian.css";
 
+const queues = [
+  { id: "food", label: "Meals" },
+  { id: "medical", label: "Medical supplies" },
+  { id: "water", label: "Clean water" },
+  { id: "blankets", label: "Blankets" },
+  { id: "formula", label: "Baby formula" },
+];
+
 export type ReliefRequest = {
   id: string;
   name: string;
@@ -84,6 +92,7 @@ function PledgeForm({ request, token, onUpdate }: {
 
 export function ReliefBoard({ token, onPledge }: { token?: string; onPledge?: () => void }) {
   const [requests, setRequests] = useState<ReliefRequest[]>([]);
+  const [queue, setQueue] = useState("food");
   const [error, setError] = useState("");
 
   function refresh() {
@@ -102,8 +111,13 @@ export function ReliefBoard({ token, onPledge }: { token?: string; onPledge?: ()
       <h2 id="relief-title">Relief requests</h2>
       {error && <p role="alert">{error}</p>}
       {!token && <a className="human-link" href="/donor">Verify your phone to pledge</a>}
+      <div className="human-actions human-queues" role="group" aria-label="Relief categories">
+        {queues.map(({ id, label }) => (
+          <button className="human-action" type="button" key={id} aria-pressed={queue === id} onClick={() => setQueue(id)}>{label}</button>
+        ))}
+      </div>
       <div className="human-grid">
-        {requests.map((request) => (
+        {requests.filter((request) => request.category === queue).map((request) => (
           <article className="human-card" key={request.id}>
             {request.meal && <small>{request.window} · {request.date} · Sri Lanka time</small>}
             <h3>{request.name}</h3>

@@ -3,6 +3,9 @@ import { HttpError } from "./http.mjs";
 
 const seedRequests = [
   { id: "medical-badulla", name: "First-aid kits", district: "Badulla", category: "medical", unit: "kits", required: 30 },
+  { id: "water-kalutara", name: "Clean water bowsers", district: "Kalutara", category: "water", unit: "bowsers", required: 4 },
+  { id: "blankets-badulla", name: "Emergency blankets", district: "Badulla", category: "blankets", unit: "blankets", required: 80 },
+  { id: "formula-gampaha", name: "Baby formula", district: "Gampaha", category: "formula", unit: "tins", required: 24 },
 ];
 const meals = [
   { id: "breakfast", name: "Breakfast parcels", window: "06:00–09:00", required: 140 },

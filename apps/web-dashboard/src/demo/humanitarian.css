@@ -17,3 +17,5 @@
 .relief-progress progress { width: 100%; height: 10px; accent-color: #206c53; }
 .relief-progress dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: .78rem; color: #405d52; }
 .relief-progress dd { font-size: 1rem; font-weight: 700; color: #193831; }
+.human-queues { margin-top: 12px; }
+.human-queues [aria-pressed="true"] { background: #195c46; border-color: #195c46; color: #fff; }
