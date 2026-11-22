@@ -3,12 +3,12 @@ import type { KeyboardEvent, PointerEvent } from "react";
 import { AlertTriangle, Crosshair, Minus, Mountain, Plus, Waves } from "lucide-react";
 import "./disaster-map.css";
 
-type Point = [number, number];
+export type Point = [number, number];
 type Polygon = Point[][];
 type Geometry =
   | { type: "Polygon"; coordinates: Polygon }
   | { type: "MultiPolygon"; coordinates: Polygon[] };
-type BoundaryData = { features: { geometry: Geometry }[] };
+export type BoundaryData = { features: { geometry: Geometry }[] };
 type Incident = { id: string; detail: string; status: string };
 type MapView = { zoom: number; x: number; y: number };
 
@@ -37,7 +37,7 @@ const cities: [string, Point][] = [
 ];
 const defaultView = { zoom: 1, x: 0, y: 0 };
 
-function project([longitude, latitude]: Point, width: number, height: number, view: MapView): Point {
+export function project([longitude, latitude]: Point, width: number, height: number, view: MapView): Point {
   const scale = Math.min((height - 64) / 3.92, (width - 60) / 2.23) * view.zoom;
   return [
     width / 2 + view.x + (longitude - 80.765) * scale * 0.99,
@@ -47,7 +47,7 @@ function project([longitude, latitude]: Point, width: number, height: number, vi
 
 type LabelBounds = { left: number; top: number; right: number; bottom: number };
 
-function drawMap(canvas: HTMLCanvasElement, data: BoundaryData, width: number, height: number, view: MapView, points: Point[]) {
+export function drawMap(canvas: HTMLCanvasElement, data: BoundaryData, width: number, height: number, view: MapView, points: Point[]) {
   const ratio = Math.min(window.devicePixelRatio || 1, 2);
   const pixelWidth = Math.round(width * ratio);
   const pixelHeight = Math.round(height * ratio);

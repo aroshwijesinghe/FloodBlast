@@ -19,3 +19,12 @@
 .relief-progress dd { font-size: 1rem; font-weight: 700; color: #193831; }
 .human-queues { margin-top: 12px; }
 .human-queues [aria-pressed="true"] { background: #195c46; border-color: #195c46; color: #fff; }
+.shelter-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+.shelter-map { height: 350px; }
+.shelter-map canvas { cursor: default; touch-action: auto; }
+.shelter-marker { position: absolute; display: grid; place-items: center; width: 33px; height: 33px; transform: translate(-50%, -50%); z-index: 1; border: 2px solid #fff; border-radius: 50%; color: #fff; background: #187449; box-shadow: 0 2px 6px #143e3670; }
+.shelter-marker[aria-pressed="true"] { z-index: 2; box-shadow: 0 0 0 3px #163f3780; }
+.shelter-choices { display: grid; gap: 6px; }
+.shelter-choices button { width: 100%; text-align: left; }
+.shelter-choices button[aria-pressed="true"] { background: #deeee4; border-color: #70a68a; }
+.shelter-detail { margin-top: 12px; }

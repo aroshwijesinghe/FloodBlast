@@ -19,6 +19,7 @@ import { LoginAtlas } from "./LoginAtlas";
 import { DisasterMap } from "./DisasterMap";
 import { DonorPortal } from "./demo/DonorPortal";
 import { ReliefBoard } from "./demo/ReliefBoard";
+import { ShelterDirectory } from "./demo/ShelterDirectory";
 import { operatorToken, signInOperator, signOutOperator } from "./demo/operator";
 import "./operations.css";
 import "./login-atlas.css";
@@ -364,6 +365,7 @@ function Workspace({ leave }: { leave: () => void }) {
         </small>
         <h1>{section || "Operations overview"}</h1>
         {section === "Relief" && <div className="humanitarian"><ReliefBoard operator={operatorToken()} /></div>}
+        {section === "Shelters" && <div className="humanitarian"><ShelterDirectory /></div>}
         {!section ? (
           <>
             <DisasterMap incidents={data.Incidents} />

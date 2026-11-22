@@ -2,6 +2,7 @@ import { createDonorAuth } from "./auth.mjs";
 import { HttpError, readJson, reply } from "./http.mjs";
 import { createReliefRepository } from "./relief.mjs";
 import { createDemoOperator } from "./operator.mjs";
+import { createShelterRepository } from "./shelters.mjs";
 
 const prefix = "/api/demo/";
 const loopback = new Set(["127.0.0.1", "::1", "::ffff:127.0.0.1"]);
@@ -11,6 +12,7 @@ export function createDemoApi() {
   const auth = createDonorAuth((_phone, code) => ({ demoCode: code }));
   const relief = createReliefRepository();
   const operator = createDemoOperator();
+  const shelters = createShelterRepository();
 
   return async function demoApi(request, response, next) {
     if (!request.url?.startsWith(prefix)) return next();
@@ -23,6 +25,7 @@ export function createDemoApi() {
         throw new HttpError(403, "Use the dashboard origin.");
       }
       const path = new URL(request.url, "http://localhost").pathname.slice(prefix.length);
+      if (request.method === "GET" && path === "shelters") return reply(response, 200, shelters.list());
       if (request.method === "GET" && path === "relief/requests") return reply(response, 200, relief.list());
       if (request.method === "GET" && path === "relief/operations") {
         operator.require(request.headers.authorization);
