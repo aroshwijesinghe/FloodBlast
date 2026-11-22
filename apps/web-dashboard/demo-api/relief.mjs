@@ -2,13 +2,29 @@ import { randomUUID } from "node:crypto";
 import { HttpError } from "./http.mjs";
 
 const seedRequests = [
-  { id: "lunch-gampaha", name: "Lunch parcels", district: "Gampaha", category: "food", unit: "packs", required: 200 },
   { id: "medical-badulla", name: "First-aid kits", district: "Badulla", category: "medical", unit: "kits", required: 30 },
 ];
+const meals = [
+  { id: "breakfast", name: "Breakfast parcels", window: "06:00–09:00", required: 140 },
+  { id: "lunch", name: "Lunch parcels", window: "11:00–14:00", required: 200 },
+  { id: "dinner", name: "Dinner parcels", window: "17:00–20:00", required: 180 },
+];
+const colomboDate = new Intl.DateTimeFormat("en-CA", {
+  year: "numeric", month: "2-digit", day: "2-digit", timeZone: "Asia/Colombo",
+});
 
 export function createReliefRepository() {
   const requests = new Map(seedRequests.map((request) => [request.id, request]));
   const pledges = [];
+
+  function seedMeals(date) {
+    for (const { id: meal, name, required, window } of meals) {
+      const id = `${date}-${meal}-gampaha`;
+      if (!requests.has(id)) {
+        requests.set(id, { id, name, date, meal, window, required, district: "Gampaha", category: "food", unit: "packs" });
+      }
+    }
+  }
 
   function totals(request) {
     const pledged = pledges
@@ -18,7 +34,11 @@ export function createReliefRepository() {
   }
 
   return {
-    list: () => [...requests.values()].map(totals),
+    list() {
+      const date = colomboDate.format();
+      seedMeals(date);
+      return [...requests.values()].filter((request) => !request.date || request.date === date).map(totals);
+    },
     history(phone) {
       return pledges.filter((pledge) => pledge.phone === phone).reverse().map((pledge) => {
         const { id, requestId, quantity, status, createdAt } = pledge;

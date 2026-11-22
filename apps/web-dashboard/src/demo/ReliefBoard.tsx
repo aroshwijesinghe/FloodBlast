@@ -11,6 +11,9 @@ export type ReliefRequest = {
   required: number;
   pledged: number;
   remaining: number;
+  date?: string;
+  meal?: string;
+  window?: string;
 };
 
 function PledgeForm({ request, token, onUpdate }: {
@@ -83,6 +86,7 @@ export function ReliefBoard({ token, onPledge }: { token?: string; onPledge?: ()
       <div className="human-grid">
         {requests.map((request) => (
           <article className="human-card" key={request.id}>
+            {request.meal && <small>{request.window} · {request.date} · Sri Lanka time</small>}
             <h3>{request.name}</h3>
             <p>{request.district} · {request.remaining} {request.unit} still needed</p>
             {token && <PledgeForm request={request} token={token} onUpdate={update} />}
