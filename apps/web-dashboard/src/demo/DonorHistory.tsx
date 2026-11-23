@@ -40,7 +40,7 @@ export function DonorHistory({ token, revision }: { token: string; revision: num
             <time dateTime={row.createdAt}>{new Intl.DateTimeFormat(language, {
               dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Colombo",
             }).format(new Date(row.createdAt))}</time>
-            <small>Reference {row.id}</small>
+            <small>{t("Reference {id}", { id: row.id })}</small>
           </li>
         ))}
       </ul>

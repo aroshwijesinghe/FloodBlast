@@ -21,7 +21,7 @@ class ConnectionStatusBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
       child: Text(
         isOffline 
-            ? context.tr('offline') 
+            ? context.tr('offline')
             : context.tr('poorConnection'),
         textAlign: TextAlign.center,
         style: const TextStyle(

@@ -51,7 +51,10 @@ export function DonorPortal() {
   return (
     <main className="workspace">
       <div className="work-body humanitarian">
-        <div className="donor-toolbar"><a className="human-link" href="/login">{t("Operations sign-in")}</a><LanguageSwitcher /></div>
+        <div className="donor-toolbar">
+          <a className="human-link" href="/login">{t("Operations sign-in")}</a>
+          <LanguageSwitcher />
+        </div>
         <h1>{t("Donor portal")}</h1>
         {donor ? (
           <section className="human-panel">

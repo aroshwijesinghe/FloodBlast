@@ -31,6 +31,12 @@
   line-height: 1.02;
 }
 
+html:is(:lang(si), :lang(ta)) :is(.login-atlas-copy h1, .auth h2, .work-body h1) {
+  letter-spacing: normal;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
 .login-atlas-copy h1 span {
   color: #7ad7b4;
 }

@@ -220,10 +220,10 @@ function Login({ enter }: { enter: (name: string) => void }) {
     <main className="login">
       <header>
         <Brand />
-        <div className="header-actions"><LanguageSwitcher />
-        <small>
-          <i /> {t("Development workspace")}
-        </small></div>
+        <div className="header-actions">
+          <LanguageSwitcher />
+          <small><i /> {t("Development workspace")}</small>
+        </div>
       </header>
       <div className="login-grid">
         <LoginAtlas />
@@ -359,10 +359,12 @@ function Workspace({ leave }: { leave: () => void }) {
     <main className="workspace">
       <header>
         <Brand />
-        <div className="header-actions"><LanguageSwitcher />
-        <button onClick={leave}>
-          <LogOut size={16} /> {t("Sign out")}
-        </button></div>
+        <div className="header-actions">
+          <LanguageSwitcher />
+          <button onClick={leave}>
+            <LogOut size={16} /> {t("Sign out")}
+          </button>
+        </div>
       </header>
       <nav>
         {["Overview", ...sections].map((s) => (
@@ -430,35 +432,35 @@ function Workspace({ leave }: { leave: () => void }) {
         )}
         {!forecast && <div className="records">
           {visibleRecords.map((r) => (
-              <article key={r.id}>
-                <ClipboardList />
-                <div>
-                  <small>{recordText(r, r.district)}</small>
-                  <h3>{recordText(r, r.name)}</h3>
-                  <p>{recordText(r, r.detail)}</p>
-                </div>
-                {section ? (
-                  <select
-                    aria-label={t("Status for {name}", { name: recordText(r, r.name) })}
-                    value={r.status}
-                    onChange={(e) =>
-                      save(
-                        section,
-                        data[section].map((x) =>
-                          x.id === r.id ? { ...x, status: e.target.value } : x,
-                        ),
-                      )
-                    }
-                  >
-                    {statuses[section].map((s) => (
-                      <option key={s} value={s}>{t(s)}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <span>{t(r.status)}</span>
-                )}
-              </article>
-            ))}
+            <article key={r.id}>
+              <ClipboardList />
+              <div>
+                <small>{recordText(r, r.district)}</small>
+                <h3>{recordText(r, r.name)}</h3>
+                <p>{recordText(r, r.detail)}</p>
+              </div>
+              {section ? (
+                <select
+                  aria-label={t("Status for {name}", { name: recordText(r, r.name) })}
+                  value={r.status}
+                  onChange={(e) =>
+                    save(
+                      section,
+                      data[section].map((x) =>
+                        x.id === r.id ? { ...x, status: e.target.value } : x,
+                      ),
+                    )
+                  }
+                >
+                  {statuses[section].map((s) => (
+                    <option key={s} value={s}>{t(s)}</option>
+                  ))}
+                </select>
+              ) : (
+                <span>{t(r.status)}</span>
+              )}
+            </article>
+          ))}
           {visibleRecords.length === 0 && <p>{t("No matching records.")}</p>}
         </div>}
       </div>
