@@ -32,11 +32,11 @@ function ReliefProgress({ request }: { request: ReliefRequest }) {
   const { t } = useTranslation();
   return (
     <div className="relief-progress">
-      <progress max={request.required} value={request.pledged} aria-label={t("{t(name)} pledged quantity", { name: t(request.name) })} />
+      <progress max={request.required} value={request.pledged} aria-label={t("{name} pledged quantity", { name: t(request.name) })} />
       <dl>
         <div><dt>{t("Required")}</dt><dd>{request.required}</dd></div>
         <div><dt>{t("Pledged")}</dt><dd>{request.pledged}</dd></div>
-        <div><dt>{t("Remaining")}</dt><dd>{request.remaining}</dd></div>
+        <div><dt>{t("Remaining unmet")}</dt><dd>{request.remaining}</dd></div>
       </dl>
     </div>
   );
