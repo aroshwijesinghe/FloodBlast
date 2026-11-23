@@ -1,0 +1,34 @@
+.humanitarian { color: #193831; }
+.humanitarian h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
+.humanitarian h3 { font-weight: 700; }
+.humanitarian p { color: #405d52; }
+.humanitarian [role="alert"] { color: #8f3026; }
+.human-panel { padding: clamp(16px, 3vw, 24px); border: 1px solid #ccddd2; border-radius: 14px; background: #fff; margin: 14px 0; }
+.human-form { display: grid; gap: 10px; max-width: 420px; }
+.human-form label { margin: 0; }
+.human-form input, .human-form select { margin-top: 5px; min-height: 48px; padding: 8px 12px; }
+.human-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.human-action { padding: 9px 12px; border: 1px solid #bdd0c4; border-radius: 8px; background: #f1f7f3; color: #184d39; }
+.human-link { color: #185c48; text-decoration: underline; text-underline-offset: 3px; }
+.humanitarian .human-panel > .human-action { margin-left: 12px; }
+.human-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); margin-top: 12px; }
+.human-card { display: grid; align-content: start; gap: 8px; padding: 14px; border-radius: 10px; border: 1px solid #d6e4db; background: #f8fbf9; }
+.relief-progress { display: grid; gap: 6px; }
+.relief-progress progress { width: 100%; height: 10px; accent-color: #206c53; }
+.relief-progress dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: .78rem; color: #405d52; }
+.relief-progress dd { font-size: 1rem; font-weight: 700; color: #193831; }
+.human-queues { margin-top: 12px; }
+.human-queues [aria-pressed="true"] { background: #195c46; border-color: #195c46; color: #fff; }
+.shelter-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+.shelter-map { height: 350px; }
+.shelter-map canvas { cursor: default; touch-action: auto; }
+.shelter-marker { position: absolute; display: grid; place-items: center; width: 33px; height: 33px; transform: translate(-50%, -50%); z-index: 1; border: 2px solid #fff; border-radius: 50%; color: #fff; background: #187449; box-shadow: 0 2px 6px #143e3670; }
+.shelter-marker[aria-pressed="true"] { z-index: 2; box-shadow: 0 0 0 3px #163f3780; }
+.shelter-choices { display: grid; gap: 6px; }
+.shelter-choices button { width: 100%; text-align: left; }
+.shelter-choices button[aria-pressed="true"] { background: #deeee4; border-color: #70a68a; }
+.shelter-detail { margin-top: 12px; }
+.shelter-detail h4 { font-size: .94rem; font-weight: 700; }
+.facility-list { display: grid; gap: 4px; margin: 7px 0 10px; font-size: .86rem; }
+.facility-list > div { display: flex; justify-content: space-between; gap: 10px; }
+.facility-list dd { font-weight: 600; }

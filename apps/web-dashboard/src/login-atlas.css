@@ -1,0 +1,298 @@
+.login {
+  background: radial-gradient(ellipse at 85% 100%, #d9e8e4, transparent 60%), #edf2ef;
+}
+
+.login .login-grid {
+  max-width: 1200px;
+  grid-template-columns: minmax(0, 1.16fr) minmax(0, 1fr);
+  min-height: min(655px, 83vh);
+  border: 1px solid #cedbd5;
+  border-radius: 20px;
+  background: #fbfcfb;
+  box-shadow: 0 20px 45px #0b30231c;
+}
+
+.login-atlas {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(17px, 3vw, 30px);
+  padding: clamp(22px, 4vw, 55px);
+  color: #f3faf7;
+  background: radial-gradient(ellipse at 75% 60%, #174743 0%, #0d302d 55%, #102724 100%);
+}
+
+.login-atlas-copy h1 {
+  margin: 0;
+  font-size: clamp(35px, 4.4vw, 65px);
+  font-weight: 650;
+  letter-spacing: -0.058em;
+  line-height: 1.02;
+}
+
+html:is(:lang(si), :lang(ta)) :is(.login-atlas-copy h1, .auth h2, .work-body h1) {
+  letter-spacing: normal;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.login-atlas-copy h1 span {
+  color: #7ad7b4;
+}
+
+.login-atlas-copy p {
+  margin: 11px 0 0;
+  color: #b9d6ce;
+  font-size: 14px;
+}
+
+.login-atlas-figure {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid #84c3b551;
+  border-radius: 13px;
+  background: #0b2928;
+}
+
+.login-atlas-map {
+  position: relative;
+  isolation: isolate;
+  aspect-ratio: 24 / 13;
+  min-height: 178px;
+  color: #d6ece4;
+  background-color: #113938;
+  background-image:
+    linear-gradient(#8bd1be15 1px, transparent 1px),
+    linear-gradient(90deg, #8bd1be15 1px, transparent 1px),
+    radial-gradient(ellipse at 8% 100%, #0b2a30, transparent 75%);
+  background-size: 28px 28px, 28px 28px, auto;
+}
+
+.login-atlas-map canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(-3px 3px 3px #071c1c);
+}
+
+.login-atlas-north,
+.login-atlas-ocean {
+  position: absolute;
+  z-index: 1;
+  color: #b1d1cd;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+
+.login-atlas-north {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  top: 12px;
+  left: 12px;
+}
+
+.login-atlas-north svg {
+  transform: rotate(-45deg);
+}
+
+.login-atlas-ocean {
+  top: 27%;
+  left: 7%;
+  font-style: italic;
+}
+
+.login-atlas-town,
+.login-atlas-marker {
+  position: absolute;
+  z-index: 1;
+}
+
+.login-atlas-town {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #f7fffb;
+  font-size: clamp(10px, 1.05vw, 12px);
+  font-weight: 600;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px #041f1e, 0 0 4px #041f1e;
+  transform: translate(-2px, -50%);
+}
+
+.login-atlas-town.label-west {
+  flex-direction: row-reverse;
+  transform: translate(calc(-100% + 2px), -50%);
+}
+
+.login-atlas-town > span {
+  width: 4px;
+  height: 4px;
+  flex: none;
+  border-radius: 50%;
+  background: #f0f9d2;
+  box-shadow: 0 0 0 2px #113c34;
+}
+
+.login-atlas-marker {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: #0d3033;
+  box-shadow: 0 0 0 3px #113c3ac2;
+  transform: translate(-50%, -50%);
+}
+
+.login-atlas-figure .water {
+  color: #a9e8fa;
+}
+
+.login-atlas-figure .landslide {
+  color: #ffd39b;
+}
+
+.login-atlas-map-status {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+}
+
+.login-atlas-figure figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 7px 12px;
+  padding: 12px 14px;
+  border-top: 1px solid #84c3b544;
+  font-size: 11px;
+}
+
+.login-atlas-region,
+.login-atlas-figure li {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.login-atlas-region {
+  color: #e6f3ed;
+  font-weight: 600;
+}
+
+.login-atlas-samples,
+.login-atlas-credit {
+  color: #b3cec8;
+}
+
+.login-atlas-figure ul {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 0;
+  padding: 0;
+}
+
+.login-atlas-credit {
+  margin-top: -16px;
+  font-size: 10px;
+}
+
+.login-atlas-credit a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.login .auth {
+  min-width: 0;
+  padding: clamp(22px, 4vw, 52px);
+}
+
+.login .auth h2 {
+  font-size: clamp(30px, 3vw, 44px);
+}
+
+.login .auth form {
+  margin-top: 22px;
+}
+
+.login .auth input {
+  min-height: 44px;
+  background: white;
+  color: #173c37;
+  font-weight: 400;
+  box-shadow: none;
+}
+
+.login .pass {
+  display: block;
+}
+
+.login .auth input:focus {
+  border-color: #28745e;
+  outline: 2px solid #28745e42;
+  outline-offset: 1px;
+}
+
+.login .auth [role="alert"] {
+  margin: 9px 0 0;
+  color: #a1342b;
+}
+
+.login .auth .primary {
+  min-height: 44px;
+  box-shadow: none;
+}
+
+.login .creds {
+  background: #edf4f0;
+  border-color: #d4e3db;
+}
+
+.login .creds button {
+  justify-self: start;
+}
+
+.login .switch {
+  margin-top: 14px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .login-atlas-marker {
+    animation: login-marker-enter 270ms ease-out both;
+  }
+
+  @keyframes login-marker-enter {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+}
+
+@media (max-width: 760px) {
+  .login .login-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .login .auth {
+    grid-row: 1;
+  }
+
+  .login-atlas-break {
+    display: none;
+  }
+}
+
+@media (max-width: 390px) {
+  .login-atlas-ocean {
+    display: none;
+  }
+}

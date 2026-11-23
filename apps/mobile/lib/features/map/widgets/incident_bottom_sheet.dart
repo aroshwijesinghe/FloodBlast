@@ -1,3 +1,4 @@
+import 'package:flood_blast/app/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../data/models/incident.dart';
@@ -11,6 +12,8 @@ class IncidentBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final reportedAt = incident.createdAt.toLocal();
+    final dates = MaterialLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
@@ -27,7 +30,7 @@ class IncidentBottomSheet extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  incident.category.name.toUpperCase(),
+                  context.tr(incident.category.name),
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
@@ -36,7 +39,7 @@ class IncidentBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            incident.description ?? 'No description provided.',
+            incident.description ?? context.tr('noDescription'),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -45,7 +48,7 @@ class IncidentBottomSheet extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Reported ${incident.createdAt.toLocal().toString().substring(0, 16)}',
+                "${context.tr('reported')} · ${dates.formatMediumDate(reportedAt)} ${dates.formatTimeOfDay(TimeOfDay.fromDateTime(reportedAt))}",
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               ElevatedButton(
@@ -53,7 +56,7 @@ class IncidentBottomSheet extends StatelessWidget {
                   context.pop();
                   context.push('/incident/${incident.id}');
                 },
-                child: const Text('View Details'),
+                child: Text(context.tr('viewDetails')),
               ),
             ],
           ),
