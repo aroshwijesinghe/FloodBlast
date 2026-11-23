@@ -1,3 +1,4 @@
+import 'package:flood_blast/app/app_language.dart';
 import 'package:flutter/material.dart';
 
 class ConnectionStatusBar extends StatelessWidget {
@@ -20,8 +21,8 @@ class ConnectionStatusBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
       child: Text(
         isOffline 
-            ? 'Offline - Data saved locally' 
-            : 'Poor connection - Syncing may be slow',
+            ? context.tr('offline') 
+            : context.tr('poorConnection'),
         textAlign: TextAlign.center,
         style: const TextStyle(
           color: Colors.white,

@@ -1,3 +1,4 @@
+import { useTranslation } from "./i18n";
 import { useEffect, useRef, useState } from "react";
 import { MapPin, Mountain, Navigation, Waves } from "lucide-react";
 
@@ -95,6 +96,7 @@ function drawRelief(canvas: HTMLCanvasElement, boundaries: Boundaries) {
 }
 
 export function LoginAtlas() {
+  const { t } = useTranslation();
   const canvas = useRef<HTMLCanvasElement>(null);
   const [mapStatus, setMapStatus] = useState<"loading" | "loaded" | "error">("loading");
 
@@ -119,42 +121,42 @@ export function LoginAtlas() {
   return (
     <section className="login-atlas">
       <div className="login-atlas-copy">
-        <h1>Flood response<br className="login-atlas-break" /> coordination<span>.</span></h1>
-        <p>Sri Lanka operations center</p>
+        <h1>{t("Flood response")}<br className="login-atlas-break" /> {t("coordination")}<span>.</span></h1>
+        <p>{t("Sri Lanka operations center")}</p>
       </div>
-      <figure className="login-atlas-figure" aria-label="Relief map of western and central Sri Lanka">
+      <figure className="login-atlas-figure" aria-label={t("Relief map of western and central Sri Lanka")}>
         <div className="login-atlas-map">
           <canvas ref={canvas} width={width} height={height} aria-hidden="true" />
           {mapStatus === "loaded" ? (
             <>
-              <span className="login-atlas-north" aria-hidden="true"><Navigation size={13} /> N</span>
-              <span className="login-atlas-ocean" aria-hidden="true">Indian Ocean</span>
+              <span className="login-atlas-north" aria-hidden="true"><Navigation size={13} /> {t("N")}</span>
+              <span className="login-atlas-ocean" aria-hidden="true">{t("Indian Ocean")}</span>
               {towns.map(({ name, point, westLabel }) => (
                 <span key={name} className={`login-atlas-town${westLabel ? " label-west" : ""}`} style={markerPosition(point)}>
-                  <span aria-hidden="true" />{name}
+                  <span aria-hidden="true" />{t(name)}
                 </span>
               ))}
               {alerts.map(({ name, point, icon: Icon, kind }) => (
-                <span key={name} className={`login-atlas-marker ${kind}`} style={markerPosition(point)} title={`Sample alert: ${name}`}>
+                <span key={name} className={`login-atlas-marker ${kind}`} style={markerPosition(point)} title={t("Sample alert: {name}", { name: t(name) })}>
                   <Icon size={14} aria-hidden="true" />
                 </span>
               ))}
             </>
           ) : (
-            <p className="login-atlas-map-status" role="status">{mapStatus === "loading" ? "Loading regional map…" : "Regional map unavailable"}</p>
+            <p className="login-atlas-map-status" role="status">{t(mapStatus === "loading" ? "Loading regional map…" : "Regional map unavailable")}</p>
           )}
         </div>
         <figcaption>
-          <span className="login-atlas-region"><MapPin size={15} /> Western &amp; central Sri Lanka</span>
-          <span className="login-atlas-samples">Sample alerts</span>
-          <ul aria-label="Sample alerts in the regional map">
-            {alerts.map(({ name, icon: Icon, kind }) => <li key={name} className={kind}><Icon size={13} aria-hidden="true" />{name}</li>)}
+          <span className="login-atlas-region"><MapPin size={15} /> {t("Western & central Sri Lanka")}</span>
+          <span className="login-atlas-samples">{t("Sample alerts")}</span>
+          <ul aria-label={t("Sample alerts in the regional map")}>
+            {alerts.map(({ name, icon: Icon, kind }) => <li key={name} className={kind}><Icon size={13} aria-hidden="true" />{t(name)}</li>)}
           </ul>
         </figcaption>
       </figure>
       <div className="login-atlas-credit">
-        Illustrated relief · <a href="https://www.geoboundaries.org/">geoBoundaries</a> ·{" "}
-        <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>
+        {t("Illustrated relief")} · <a href="https://www.geoboundaries.org/">geoBoundaries</a> ·{" "}
+        <a href="https://www.openstreetmap.org/copyright">{t("© OpenStreetMap contributors")}</a>
       </div>
     </section>
   );

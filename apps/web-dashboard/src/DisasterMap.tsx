@@ -1,3 +1,4 @@
+import { useTranslation, type Translate } from "./i18n";
 import { useEffect, useRef, useState } from "react";
 import type { KeyboardEvent, PointerEvent } from "react";
 import { AlertTriangle, Crosshair, Minus, Mountain, Plus, Waves } from "lucide-react";
@@ -47,7 +48,7 @@ export function project([longitude, latitude]: Point, width: number, height: num
 
 type LabelBounds = { left: number; top: number; right: number; bottom: number };
 
-export function drawMap(canvas: HTMLCanvasElement, data: BoundaryData, width: number, height: number, view: MapView, points: Point[]) {
+export function drawMap(canvas: HTMLCanvasElement, data: BoundaryData, width: number, height: number, view: MapView, points: Point[], t: Translate) {
   const ratio = Math.min(window.devicePixelRatio || 1, 2);
   const pixelWidth = Math.round(width * ratio);
   const pixelHeight = Math.round(height * ratio);
@@ -100,7 +101,7 @@ export function drawMap(canvas: HTMLCanvasElement, data: BoundaryData, width: nu
   context.font = "italic 11px Segoe UI, sans-serif";
   context.fillStyle = "#527785";
   const [oceanX, oceanY] = project([79.40, 7.65], width, height, view);
-  context.fillText("Indian Ocean", Math.max(12, oceanX - 63), oceanY);
+  context.fillText(t("Indian Ocean"), Math.max(12, oceanX - 63), oceanY);
 
   context.font = "600 11px Segoe UI, sans-serif";
   context.textBaseline = "middle";
@@ -111,7 +112,8 @@ export function drawMap(canvas: HTMLCanvasElement, data: BoundaryData, width: nu
     if (width < 360 && view.zoom === 1 && name === "Kurunegala") continue;
     const [x, y] = project(point, width, height, view);
     if (x < 0 || x > width || y < 0 || y > height) continue;
-    const textWidth = context.measureText(name).width;
+    const label = t(name);
+    const textWidth = context.measureText(label).width;
     const candidates: Point[] = [[x + 7, y], [x - textWidth - 7, y], [x - textWidth / 2, y + 12], [x - textWidth / 2, y - 12]];
     for (const [start, baseline] of candidates) {
       const bounds = { left: start - 2, right: start + textWidth + 2, top: baseline - 7, bottom: baseline + 7 };
@@ -123,9 +125,9 @@ export function drawMap(canvas: HTMLCanvasElement, data: BoundaryData, width: nu
       context.fill();
       context.strokeStyle = "#eef3e7";
       context.lineWidth = 3;
-      context.strokeText(name, start, baseline);
+      context.strokeText(label, start, baseline);
       context.fillStyle = "#2b4945";
-      context.fillText(name, start, baseline);
+      context.fillText(label, start, baseline);
       labels.push(bounds);
       break;
     }
@@ -133,6 +135,7 @@ export function drawMap(canvas: HTMLCanvasElement, data: BoundaryData, width: nu
 }
 
 export function DisasterMap({ incidents }: { incidents: Incident[] }) {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState(hazards[0]);
   const [filter, setFilter] = useState<HazardType | "all">("all");
   const [view, setView] = useState(defaultView);
@@ -174,8 +177,8 @@ export function DisasterMap({ incidents }: { incidents: Incident[] }) {
     const points = hazards
       .filter((hazard) => filter === "all" || hazard.type === filter)
       .map(({ point }) => project(point, width, height, view));
-    drawMap(canvas.current, boundaries, width, height, view, points);
-  }, [boundaries, width, height, view, filter]);
+    drawMap(canvas.current, boundaries, width, height, view, points, t);
+  }, [boundaries, width, height, view, filter, t]);
 
   function changeFilter(next: HazardType | "all") {
     setFilter(next);
@@ -255,14 +258,14 @@ export function DisasterMap({ incidents }: { incidents: Incident[] }) {
     <section className="disaster-map" aria-labelledby="disaster-map-title">
       <header className="disaster-map-heading">
         <div>
-          <h2 id="disaster-map-title">Sri Lanka disaster map</h2>
-          <p>Explore reported hazards by location.</p>
+          <h2 id="disaster-map-title">{t("Sri Lanka disaster map")}</h2>
+          <p>{t("Explore reported hazards by location.")}</p>
         </div>
-        <span className="disaster-map-demo">Demo data</span>
+        <span className="disaster-map-demo">{t("Demo data")}</span>
       </header>
       <div className="disaster-map-layout">
         <div ref={viewport} className="disaster-viewport" role="group" tabIndex={0} onKeyDown={handleMapKey}
-          aria-label="Sri Lanka map. Use arrow keys to pan, plus and minus to zoom, and Home to reset.">
+          aria-label={t("Sri Lanka map. Use arrow keys to pan, plus and minus to zoom, and Home to reset.")}>
           <canvas
             ref={canvas}
             className={dragging ? "is-dragging" : undefined}
@@ -272,7 +275,7 @@ export function DisasterMap({ incidents }: { incidents: Incident[] }) {
             onLostPointerCapture={stopDrag}
             aria-hidden="true"
           />
-          {!boundaries && <span className="disaster-map-notice" role="status">{unavailable ? "Map unavailable. Locations are listed beside it." : "Loading map…"}</span>}
+          {!boundaries && <span className="disaster-map-notice" role="status">{t(unavailable ? "Map unavailable. Locations are listed beside it." : "Loading map…")}</span>}
           {boundaries && width > 0 && visible.map((hazard) => {
             const [x, y] = project(hazard.point, width, height, view);
             if (x < 14 || y < 14 || x > width - 14 || y > height - 14) return null;
@@ -283,8 +286,8 @@ export function DisasterMap({ incidents }: { incidents: Incident[] }) {
                 type="button"
                 className={`disaster-marker ${hazard.type}`}
                 style={{ left: x, top: y }}
-                aria-label={`${hazard.name} in ${hazard.place}`}
-                title={`${hazard.name} · ${hazard.place}`}
+                aria-label={t("{hazard} in {place}", { hazard: t(hazard.name), place: t(hazard.place) })}
+                title={`${t(hazard.name)} · ${t(hazard.place)}`}
                 aria-pressed={selected.id === hazard.id}
                 onClick={() => setSelected(hazard)}
               >
@@ -292,31 +295,31 @@ export function DisasterMap({ incidents }: { incidents: Incident[] }) {
               </button>
             );
           })}
-          <span className="disaster-map-north" aria-hidden="true">↑ N</span>
-          <div className="disaster-map-controls" role="group" aria-label="Map controls">
-            <button type="button" onClick={() => zoomBy(0.5)} disabled={view.zoom === 2.5 || !boundaries} aria-label="Zoom in" title="Zoom in"><Plus size={15} /></button>
-            <button type="button" onClick={() => zoomBy(-0.5)} disabled={view.zoom === 1 || !boundaries} aria-label="Zoom out" title="Zoom out"><Minus size={15} /></button>
-            <button type="button" onClick={() => setView(defaultView)} aria-label="Reset map view" title="Reset map view" disabled={!boundaries}><Crosshair size={15} /></button>
+          <span className="disaster-map-north" aria-hidden="true">↑ {t("N")}</span>
+          <div className="disaster-map-controls" role="group" aria-label={t("Map controls")}>
+            <button type="button" onClick={() => zoomBy(0.5)} disabled={view.zoom === 2.5 || !boundaries} aria-label={t("Zoom in")} title={t("Zoom in")}><Plus size={15} /></button>
+            <button type="button" onClick={() => zoomBy(-0.5)} disabled={view.zoom === 1 || !boundaries} aria-label={t("Zoom out")} title={t("Zoom out")}><Minus size={15} /></button>
+            <button type="button" onClick={() => setView(defaultView)} aria-label={t("Reset map view")} title={t("Reset map view")} disabled={!boundaries}><Crosshair size={15} /></button>
           </div>
-          <a className="disaster-map-credit" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors</a>
+          <a className="disaster-map-credit" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">{t("© OpenStreetMap contributors")}</a>
         </div>
         <div className="disaster-map-panel">
-          <div className="disaster-map-filters" role="group" aria-label="Filter hazards">
-            <button type="button" aria-pressed={filter === "all"} onClick={() => changeFilter("all")}>All</button>
+          <div className="disaster-map-filters" role="group" aria-label={t("Filter hazards")}>
+            <button type="button" aria-pressed={filter === "all"} onClick={() => changeFilter("all")}>{t("All")}</button>
             {(Object.keys(hazardTypes) as HazardType[]).map((type) => (
               <button type="button" key={type} aria-pressed={filter === type} onClick={() => changeFilter(type)}>
-                <i className={type} aria-hidden="true" />{hazardTypes[type].label}
+                <i className={type} aria-hidden="true" />{t(hazardTypes[type].label)}
               </button>
             ))}
           </div>
-          <ul className="disaster-map-incidents" aria-label="Mapped incidents">
+          <ul className="disaster-map-incidents" aria-label={t("Mapped incidents")}>
             {visible.map((hazard) => {
               const Icon = hazardTypes[hazard.type].icon;
               return (
                 <li key={hazard.id}>
                   <button type="button" aria-pressed={selected.id === hazard.id} onClick={() => selectHazard(hazard)}>
                     <Icon className={hazard.type} size={16} aria-hidden="true" />
-                    <span>{hazard.place}</span><small>{hazard.name}</small>
+                    <span>{t(hazard.place)}</span><small>{t(hazard.name)}</small>
                   </button>
                 </li>
               );
@@ -324,9 +327,9 @@ export function DisasterMap({ incidents }: { incidents: Incident[] }) {
           </ul>
           <div className="disaster-map-selection" aria-live="polite">
             <article className="disaster-map-detail" key={selected.id}>
-              <div><SelectedIcon className={selected.type} size={17} aria-hidden="true" /><h3>{selected.name}</h3>{incident && <span>{incident.status}</span>}</div>
-              <p>{selected.place}</p>
-              {incident && <p>{incident.detail}</p>}
+              <div><SelectedIcon className={selected.type} size={17} aria-hidden="true" /><h3>{t(selected.name)}</h3>{incident && <span>{t(incident.status)}</span>}</div>
+              <p>{t(selected.place)}</p>
+              {incident && <p>{t(incident.detail)}</p>}
             </article>
           </div>
         </div>

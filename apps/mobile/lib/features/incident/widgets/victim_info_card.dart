@@ -1,3 +1,4 @@
+import 'package:flood_blast/app/app_language.dart';
 import 'package:flutter/material.dart';
 
 class VictimInfoCard extends StatelessWidget {
@@ -24,8 +25,8 @@ class VictimInfoCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Vulnerable Populations',
+            Text(
+              context.tr('vulnerableGroups'),
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             const SizedBox(height: 12),
@@ -33,11 +34,11 @@ class VictimInfoCard extends StatelessWidget {
               spacing: 16,
               runSpacing: 16,
               children: [
-                _buildCountIcon(Icons.pregnant_woman, 'Pregnant', pregnant),
-                _buildCountIcon(Icons.elderly, 'Elderly', elderly),
-                _buildCountIcon(Icons.accessible, 'Disabled', disabled),
-                _buildCountIcon(Icons.local_hospital, 'Wounded', wounded),
-                _buildCountIcon(Icons.child_care, 'Children', children),
+                _buildCountIcon(Icons.pregnant_woman, context.tr('pregnant'), pregnant),
+                _buildCountIcon(Icons.elderly, context.tr('elderly'), elderly),
+                _buildCountIcon(Icons.accessible, context.tr('disabled'), disabled),
+                _buildCountIcon(Icons.local_hospital, context.tr('wounded'), wounded),
+                _buildCountIcon(Icons.child_care, context.tr('children'), children),
               ],
             ),
           ],

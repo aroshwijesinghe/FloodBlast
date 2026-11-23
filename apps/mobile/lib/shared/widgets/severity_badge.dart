@@ -1,3 +1,4 @@
+import 'package:flood_blast/app/app_language.dart';
 import 'package:flutter/material.dart';
 import '../../data/enums/app_enums.dart';
 
@@ -26,7 +27,7 @@ class SeverityBadge extends StatelessWidget {
     
     return Chip(
       label: Text(
-        severity.name.toUpperCase(),
+        context.tr(severity.name),
         style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
       ),
       backgroundColor: color,

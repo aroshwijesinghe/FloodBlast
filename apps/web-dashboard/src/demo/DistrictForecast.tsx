@@ -1,3 +1,4 @@
+import { useTranslation } from "../i18n";
 import { useState, type FormEvent } from "react";
 
 const scenarios = {
@@ -17,6 +18,7 @@ const fields = [
 ] as const;
 
 export function DistrictForecast() {
+  const { language, t } = useTranslation();
   const [district, setDistrict] = useState<District>("Gampaha");
   const [result, setResult] = useState<Estimate>();
   const [error, setError] = useState("");
@@ -48,29 +50,29 @@ export function DistrictForecast() {
 
   return (
     <section className="human-panel">
-      <h2>24-hour food and water estimate</h2>
-      <p>Scenario planner with sample data and illustrative assumptions.</p>
+      <h2>{t("24-hour food and water estimate")}</h2>
+      <p>{t("Scenario planner with sample data and illustrative assumptions.")}</p>
       <form className="human-form" onSubmit={submit}>
-        <label>District
+        <label>{t("District")}
           <select value={district} disabled={busy} onChange={(event) => { setDistrict(event.target.value as District); setResult(undefined); }}>
-            {Object.keys(scenarios).map((name) => <option key={name}>{name}</option>)}
+            {Object.keys(scenarios).map((name) => <option key={name} value={name}>{t(name)}</option>)}
           </select>
         </label>
         {fields.map(({ key, label, min, max, step }) => (
-          <label key={`${district}-${key}`}>{label}
+          <label key={`${district}-${key}`}>{t(label)}
             <input required name={key} type="number" min={min} max={max} step={step} defaultValue={defaults[key]} />
           </label>
         ))}
-        <button className="primary" disabled={busy}>Estimate district demand</button>
+        <button className="primary" disabled={busy}>{t("Estimate district demand")}</button>
       </form>
-      {error && <p role="alert">{error}</p>}
+      {error && <p role="alert">{t(error)}</p>}
       {result && <div className="human-card shelter-detail" aria-live="polite">
-        <h3>{result.district}</h3>
+        <h3>{t(result.district)}</h3>
         <dl className="facility-list">
-          <div><dt>Estimated people affected</dt><dd>{result.people.toLocaleString()}</dd></div>
-          <div><dt>Meal packs</dt><dd>{result.meal_packs.toLocaleString()}</dd></div>
-          <div><dt>Clean water (litres)</dt><dd>{result.clean_water_litres.toLocaleString()}</dd></div>
-          <div><dt>Estimated exposed share</dt><dd>{Math.round(result.exposed_fraction * 100)}%</dd></div>
+          <div><dt>{t("Estimated people affected")}</dt><dd>{result.people.toLocaleString(language)}</dd></div>
+          <div><dt>{t("Meal packs")}</dt><dd>{result.meal_packs.toLocaleString(language)}</dd></div>
+          <div><dt>{t("Clean water (litres)")}</dt><dd>{result.clean_water_litres.toLocaleString(language)}</dd></div>
+          <div><dt>{t("Estimated exposed share")}</dt><dd>{Math.round(result.exposed_fraction * 100)}%</dd></div>
         </dl>
       </div>}
     </section>

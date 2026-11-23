@@ -1,3 +1,4 @@
+import { useTranslation } from "../i18n";
 import { useEffect, useState, type FormEvent } from "react";
 import { demoRequest } from "./api";
 import type { Shelter } from "./ShelterDirectory";
@@ -9,6 +10,7 @@ const groups = [
 type Plan = { counts: Record<string, number>; mealPacksPerWindow: number; mealPacksPerDay: number; supportKits: number };
 
 export function ShelterNeeds({ shelter, operator }: { shelter: Shelter; operator: string }) {
+  const { t } = useTranslation();
   const [plan, setPlan] = useState<Plan>();
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -57,29 +59,29 @@ export function ShelterNeeds({ shelter, operator }: { shelter: Shelter; operator
 
   return (
     <div className="shelter-needs">
-      <h4>Evacuee needs · Operations only</h4>
-      {error && <p role="alert">{error}</p>}
-      {message && <p role="status">{message} <a className="human-link" href="/relief">View relief queue</a></p>}
+      <h4>{t("Evacuee needs · Operations only")}</h4>
+      {error && <p role="alert">{t(error)}</p>}
+      {message && <p role="status">{t(message)} <a className="human-link" href="/relief">{t("View relief queue")}</a></p>}
       {plan && (editing ? (
         <form className="human-form" onSubmit={save}>
           {groups.map(([key, label]) => (
-            <label key={key}>{label}<input required name={key} type="number" min="0" max={shelter.occupancy} defaultValue={plan.counts[key]} /></label>
+            <label key={key}>{t(label)}<input required name={key} type="number" min="0" max={shelter.occupancy} defaultValue={plan.counts[key]} /></label>
           ))}
           <div className="human-actions">
-            <button className="primary" disabled={busy}>Save group counts</button>
-            <button type="button" className="human-action" disabled={busy} onClick={() => setEditing(false)}>Cancel</button>
+            <button className="primary" disabled={busy}>{t("Save group counts")}</button>
+            <button type="button" className="human-action" disabled={busy} onClick={() => setEditing(false)}>{t("Cancel")}</button>
           </div>
         </form>
       ) : <>
         <dl className="facility-list">
-          {groups.map(([key, label]) => <div key={key}><dt>{label}</dt><dd>{plan.counts[key]}</dd></div>)}
-          <div><dt>Meal packs per window</dt><dd>{plan.mealPacksPerWindow}</dd></div>
-          <div><dt>Meal packs per day</dt><dd>{plan.mealPacksPerDay}</dd></div>
-          <div><dt>First-aid stock kits (demo estimate)</dt><dd>{plan.supportKits}</dd></div>
+          {groups.map(([key, label]) => <div key={key}><dt>{t(label)}</dt><dd>{plan.counts[key]}</dd></div>)}
+          <div><dt>{t("Meal packs per window")}</dt><dd>{plan.mealPacksPerWindow}</dd></div>
+          <div><dt>{t("Meal packs per day")}</dt><dd>{plan.mealPacksPerDay}</dd></div>
+          <div><dt>{t("First-aid stock kits (demo estimate)")}</dt><dd>{plan.supportKits}</dd></div>
         </dl>
         <div className="human-actions">
-          <button type="button" className="human-action" disabled={busy} onClick={() => setEditing(true)}>Edit group counts</button>
-          <button type="button" className="human-action" disabled={busy || !plan.mealPacksPerWindow} onClick={publish}>Publish lunch request</button>
+          <button type="button" className="human-action" disabled={busy} onClick={() => setEditing(true)}>{t("Edit group counts")}</button>
+          <button type="button" className="human-action" disabled={busy || !plan.mealPacksPerWindow} onClick={publish}>{t("Publish lunch request")}</button>
         </div>
       </>)}
     </div>
