@@ -1,3 +1,4 @@
+import 'package:flood_blast/app/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -27,7 +28,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           context.go('/');
         }
       },
-      child: const Scaffold(
+      child: Scaffold(
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -38,7 +39,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               SizedBox(height: 24),
               CircularProgressIndicator(),
               SizedBox(height: 16),
-              Text('Registering device...'),
+              Text(context.tr('registering')),
             ],
           ),
         ),

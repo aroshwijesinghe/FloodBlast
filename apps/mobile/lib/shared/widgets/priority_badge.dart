@@ -1,3 +1,4 @@
+import 'package:flood_blast/app/app_language.dart';
 import 'package:flutter/material.dart';
 import '../../data/enums/app_enums.dart';
 
@@ -31,7 +32,7 @@ class PriorityBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        severity.name.toUpperCase(),
+        context.tr(severity.name),
         style: const TextStyle(
           color: Colors.white,
           fontSize: 10,

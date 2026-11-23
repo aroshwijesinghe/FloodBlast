@@ -1,3 +1,5 @@
+import 'package:flood_blast/shared/widgets/language_switcher.dart';
+import 'package:flood_blast/app/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -25,7 +27,7 @@ class _IncidentDetailScreenState extends State<IncidentDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Incident Details')),
+      appBar: AppBar(title: Text(context.tr('incidentDetails')), actions: const [LanguageSwitcher()]),
       body: BlocBuilder<IncidentBloc, IncidentState>(
         builder: (context, state) {
           if (state.isLoading || state.currentIncident == null) {
@@ -50,14 +52,14 @@ class _IncidentDetailScreenState extends State<IncidentDetailScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(incident.category.name.toUpperCase(), style: Theme.of(context).textTheme.headlineSmall),
+                  Text(context.tr(incident.category.name), style: Theme.of(context).textTheme.headlineSmall),
                   SeverityBadge(severity: incident.severity),
                 ],
               ),
               const SizedBox(height: 16),
-              Text(incident.description ?? 'No description provided.', style: Theme.of(context).textTheme.bodyLarge),
+              Text(incident.description ?? context.tr('noDescription'), style: Theme.of(context).textTheme.bodyLarge),
               const SizedBox(height: 24),
-              const Text('Media', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              Text(context.tr('media'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               const SizedBox(height: 8),
               CachedNetworkImage(
                 imageUrl: 'https://via.placeholder.com/600x400',
@@ -74,7 +76,7 @@ class _IncidentDetailScreenState extends State<IncidentDetailScreen> {
                     child: ElevatedButton.icon(
                       onPressed: () {},
                       icon: const Icon(Icons.thumb_up),
-                      label: const Text('Verify'),
+                      label: Text(context.tr('verify')),
                       style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                     ),
                   ),
@@ -83,7 +85,7 @@ class _IncidentDetailScreenState extends State<IncidentDetailScreen> {
                     child: ElevatedButton.icon(
                       onPressed: () {},
                       icon: const Icon(Icons.thumb_down),
-                      label: const Text('Deny'),
+                      label: Text(context.tr('deny')),
                       style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                     ),
                   ),

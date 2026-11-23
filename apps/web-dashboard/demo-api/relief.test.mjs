@@ -3,6 +3,16 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { createReliefRepository } from "./relief.mjs";
 
+test("a shelter's lunch request appears in the lunch window on both relief boards", () => {
+  const relief = createReliefRepository();
+  relief.publishLunch({ id: "kalutara-school", name: "School relief center", district: "Kalutara" }, 50);
+  for (const operator of [false, true]) {
+    const queue = relief.list(operator).filter(({ category }) => category === "food");
+    assert.deepEqual(queue.map(({ window }) => window), ["06:00–09:00", "11:00–14:00", "11:00–14:00", "17:00–20:00"]);
+    assert.equal(queue[2].destination, "School relief center");
+  }
+});
+
 test("pledges share a balance and a retry charges only once", () => {
   const relief = createReliefRepository();
   const lunch = relief.list().find(({ meal }) => meal === "lunch");

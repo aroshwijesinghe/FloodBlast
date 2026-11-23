@@ -1,3 +1,5 @@
+import 'package:flood_blast/shared/widgets/language_switcher.dart';
+import 'package:flood_blast/app/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -33,27 +35,27 @@ class _ContactsScreenState extends State<ContactsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Emergency Contacts')),
+      appBar: AppBar(title: Text(context.tr('contacts')), actions: const [LanguageSwitcher()]),
       body: BlocBuilder<ContactsBloc, ContactsState>(
         builder: (context, state) {
           if (state.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
           if (state.error != null) {
-            return Center(child: Text('Error: ${state.error}'));
+            return Center(child: Text(state.error!));
           }
 
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              const Text('National Emergency', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(context.tr('nationalEmergency'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               ...state.nationalContacts.map((c) => _buildContactCard(c)),
               const SizedBox(height: 24),
-              const Text('Local Contacts', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(context.tr('localContacts'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               if (state.localContacts.isEmpty)
-                const Text('No local contacts found for your area.'),
+                Text(context.tr('noLocalContacts')),
               ...state.localContacts.map((c) => _buildContactCard(c)),
             ],
           );

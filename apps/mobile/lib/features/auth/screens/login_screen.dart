@@ -1,3 +1,5 @@
+import 'package:flood_blast/shared/widgets/language_switcher.dart';
+import 'package:flood_blast/app/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -18,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: Text(context.tr('login')), actions: const [LanguageSwitcher()]),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state.isAuthenticated) {
@@ -39,14 +41,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   TextField(
                     controller: _otpController,
-                    decoration: const InputDecoration(labelText: '6-digit OTP'),
+                    decoration: InputDecoration(labelText: context.tr('otp')),
                     keyboardType: TextInputType.number,
                     maxLength: 6,
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => context.read<AuthBloc>().add(VerifyOtp(_otpController.text)),
-                    child: const Text('Verify OTP'),
+                    child: Text(context.tr('verifyOtp')),
                   ),
                 ],
               ),
@@ -60,13 +62,13 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 TextField(
                   controller: _phoneController,
-                  decoration: const InputDecoration(labelText: 'Phone Number', prefixText: '+94 '),
+                  decoration: InputDecoration(labelText: context.tr('phone'), prefixText: '+94 '),
                   keyboardType: TextInputType.phone,
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () => context.read<AuthBloc>().add(RequestOtp(_phoneController.text)),
-                  child: const Text('Send OTP'),
+                  child: Text(context.tr('sendOtp')),
                 ),
               ],
             ),

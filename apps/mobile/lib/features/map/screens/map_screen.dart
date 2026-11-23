@@ -1,3 +1,5 @@
+import 'package:flood_blast/shared/widgets/language_switcher.dart';
+import 'package:flood_blast/app/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -45,11 +47,14 @@ class _MapScreenState extends State<MapScreen> {
       appBar: AppBar(
         title: const Text('FloodBlast'),
         actions: [
+          const LanguageSwitcher(),
           IconButton(
+            tooltip: context.tr('contacts'),
             icon: const Icon(Icons.contacts),
             onPressed: () => context.push('/contacts'),
           ),
           IconButton(
+            tooltip: context.tr('login'),
             icon: const Icon(Icons.person),
             onPressed: () => context.push('/auth/login'),
           ),
@@ -94,7 +99,7 @@ class _MapScreenState extends State<MapScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/incident/create'),
         icon: const Icon(Icons.warning),
-        label: const Text('Report Incident'),
+        label: Text(context.tr('reportIncident')),
         backgroundColor: Theme.of(context).colorScheme.error,
         foregroundColor: Colors.white,
       ),

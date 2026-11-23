@@ -1,4 +1,6 @@
-﻿import { useState, type FormEvent } from "react";
+import { LanguageSwitcher } from "./components/shared/LanguageSwitcher";
+import { useTranslation } from "./i18n";
+import { useEffect, useState, type FormEvent } from "react";
 import {
   Activity,
   ArrowRight,
@@ -185,6 +187,7 @@ async function digest(value: string) {
   ).join("");
 }
 function Login({ enter }: { enter: (name: string) => void }) {
+  const { t } = useTranslation();
   const [signup, setSignup] = useState(false),
     [mail, setMail] = useState(""),
     [pass, setPass] = useState(""),
@@ -217,24 +220,25 @@ function Login({ enter }: { enter: (name: string) => void }) {
     <main className="login">
       <header>
         <Brand />
-        <small>
-          <i /> Development workspace
-        </small>
+        <div className="header-actions">
+          <LanguageSwitcher />
+          <small><i /> {t("Development workspace")}</small>
+        </div>
       </header>
       <div className="login-grid">
         <LoginAtlas />
         <section className="auth">
           <div className="auth-inner">
             <ShieldCheck className="shield" />
-            <h2>{signup ? "Create an account" : "Welcome back"}</h2>
+            <h2>{t(signup ? "Create an account" : "Welcome back")}</h2>
             <p>
-              {signup
+              {t(signup
                 ? "Create a local development account."
-                : "Sign in to your operations workspace."}
+                : "Sign in to your operations workspace.")}
             </p>
             <form onSubmit={submit}>
               <label>
-                Email address
+                {t("Email address")}
                 <input
                   required
                   type="email"
@@ -245,7 +249,7 @@ function Login({ enter }: { enter: (name: string) => void }) {
                 />
               </label>
               <label>
-                Password
+                {t("Password")}
                 <span className="pass">
                   <input
                     type={show ? "text" : "password"}
@@ -254,28 +258,28 @@ function Login({ enter }: { enter: (name: string) => void }) {
                     minLength={signup ? 8 : 1}
                     value={pass}
                     placeholder={
-                      signup ? "At least 8 characters" : "Enter your password"
+                      t(signup ? "At least 8 characters" : "Enter your password")
                     }
                     onChange={(e) => setPass(e.target.value)}
                   />
                   <button
                     type="button"
-                    aria-label={show ? "Hide password" : "Show password"}
+                    aria-label={t(show ? "Hide password" : "Show password")}
                     onClick={() => setShow(!show)}
                   >
                     {show ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </span>
               </label>
-              {error && <p role="alert">{error}</p>}
+              {error && <p role="alert">{t(error)}</p>}
               <button className="primary">
-                {signup ? "Create account" : "Sign in"}
+                {t(signup ? "Create account" : "Sign in")}
                 <ArrowRight size={18} />
               </button>
             </form>
             <div className="creds">
               <b>
-                <KeyRound size={14} /> Demo credentials
+                <KeyRound size={14} /> {t("Demo credentials")}
               </b>
               <code>
                 {email}
@@ -290,11 +294,11 @@ function Login({ enter }: { enter: (name: string) => void }) {
                   setError("");
                 }}
               >
-                Use demo account <ArrowRight size={13} />
+                {t("Use demo account")} <ArrowRight size={13} />
               </button>
             </div>
             <p className="switch">
-              {signup ? "Already registered?" : "New to the workspace?"}{" "}
+              {t(signup ? "Already registered?" : "New to the workspace?")}{" "}
               <button
                 onClick={() => {
                   setSignup(!signup);
@@ -302,10 +306,10 @@ function Login({ enter }: { enter: (name: string) => void }) {
                   setPass("");
                 }}
               >
-                {signup ? "Sign in" : "Sign up"}
+                {t(signup ? "Sign in" : "Sign up")}
               </button>
             </p>
-            <p className="switch"><a className="human-link" href="/donor">Donor portal</a></p>
+            <p className="switch"><a className="human-link" href="/donor">{t("Donor portal")}</a></p>
           </div>
         </section>
       </div>
@@ -313,6 +317,7 @@ function Login({ enter }: { enter: (name: string) => void }) {
   );
 }
 function Workspace({ leave }: { leave: () => void }) {
+  const { t } = useTranslation();
   const nav = (url: string) => window.location.assign(url),
     path = window.location.pathname.split("/")[1],
     section = sections.find((s) => s.toLowerCase() === path);
@@ -340,15 +345,26 @@ function Workspace({ leave }: { leave: () => void }) {
     ]);
     setAdding(false);
   }
+  const sampleIds = new Set(initial[section || "Incidents"].map((row) => row.id));
+  function recordText(row: Entry, value: string) {
+    return sampleIds.has(row.id) ? t(value) : value;
+  }
+  const visibleRecords = data[section || "Incidents"].filter((row) =>
+    [row.name, row.district, recordText(row, row.name), recordText(row, row.district)]
+      .join(" ").toLowerCase().includes(query.trim().toLowerCase()),
+  );
   const icons = [Activity, Package, Layers, Radio];
   const forecast = path === "forecast";
   return (
     <main className="workspace">
       <header>
         <Brand />
-        <button onClick={leave}>
-          <LogOut size={16} /> Sign out
-        </button>
+        <div className="header-actions">
+          <LanguageSwitcher />
+          <button onClick={leave}>
+            <LogOut size={16} /> {t("Sign out")}
+          </button>
+        </div>
       </header>
       <nav>
         {["Overview", ...sections].map((s) => (
@@ -357,16 +373,16 @@ function Workspace({ leave }: { leave: () => void }) {
             href={s === "Overview" ? "/" : "/" + s.toLowerCase()}
             aria-current={!forecast && s === (section || "Overview") ? "page" : undefined}
           >
-            {s}
+            {t(s)}
           </a>
         ))}
-        <a href="/forecast" aria-current={forecast ? "page" : undefined}>Forecast</a>
+        <a href="/forecast" aria-current={forecast ? "page" : undefined}>{t("Forecast")}</a>
       </nav>
       <div className="work-body">
         <small>
-          <i /> Local demo workspace
+          <i /> {t("Local demo workspace")}
         </small>
-        <h1>{forecast ? "District forecasting" : section || "Operations overview"}</h1>
+        <h1>{t(forecast ? "District forecasting" : section || "Operations overview")}</h1>
         {forecast && <div className="humanitarian"><DistrictForecast /></div>}
         {section === "Relief" && <div className="humanitarian"><ReliefBoard operator={operatorToken()} /></div>}
         {section === "Shelters" && <div className="humanitarian"><ShelterDirectory operator={operatorToken()} /></div>}
@@ -380,24 +396,24 @@ function Workspace({ leave }: { leave: () => void }) {
                   <button key={s} onClick={() => nav("/" + s.toLowerCase())}>
                     <Icon />
                     <strong>{data[s].length}</strong>
-                    {s}
+                    {t(s)}
                     <ArrowRight size={15} />
                   </button>
                 );
               })}
             </div>
-            <h2>Incident register</h2>
+            <h2>{t("Incident register")}</h2>
           </>
         ) : (
           <div className="tools">
             <input
-              aria-label="Search records"
-              placeholder="Search name or district"
+              aria-label={t("Search records")}
+              placeholder={t("Search name or district")}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
             <button className="primary" onClick={() => setAdding(!adding)}>
-              {adding ? "Cancel" : "+ Add record"}
+              {t(adding ? "Cancel" : "+ Add record")}
             </button>
           </div>
         ))}
@@ -405,63 +421,58 @@ function Workspace({ leave }: { leave: () => void }) {
           <form className="entry" onSubmit={add}>
             {["name", "district", "detail"].map((n) => (
               <label key={n}>
-                {n}
+                {t(n)}
                 <input required name={n} />
               </label>
             ))}
             <button className="primary">
-              <Check size={16} /> Save record
+              <Check size={16} /> {t("Save record")}
             </button>
           </form>
         )}
         {!forecast && <div className="records">
-          {data[section || "Incidents"]
-            .filter((r) =>
-              (r.name + " " + r.district)
-                .toLowerCase()
-                .includes(query.toLowerCase()),
-            )
-            .map((r) => (
-              <article key={r.id}>
-                <ClipboardList />
-                <div>
-                  <small>{r.district}</small>
-                  <h3>{r.name}</h3>
-                  <p>{r.detail}</p>
-                </div>
-                {section ? (
-                  <select
-                    aria-label={"Status for " + r.name}
-                    value={r.status}
-                    onChange={(e) =>
-                      save(
-                        section,
-                        data[section].map((x) =>
-                          x.id === r.id ? { ...x, status: e.target.value } : x,
-                        ),
-                      )
-                    }
-                  >
-                    {statuses[section].map((s) => (
-                      <option key={s}>{s}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <span>{r.status}</span>
-                )}
-              </article>
-            ))}
-          {!data[section || "Incidents"].some((r) =>
-            (r.name + " " + r.district)
-              .toLowerCase()
-              .includes(query.toLowerCase()),
-          ) && <p>No matching records.</p>}
+          {visibleRecords.map((r) => (
+            <article key={r.id}>
+              <ClipboardList />
+              <div>
+                <small>{recordText(r, r.district)}</small>
+                <h3>{recordText(r, r.name)}</h3>
+                <p>{recordText(r, r.detail)}</p>
+              </div>
+              {section ? (
+                <select
+                  aria-label={t("Status for {name}", { name: recordText(r, r.name) })}
+                  value={r.status}
+                  onChange={(e) =>
+                    save(
+                      section,
+                      data[section].map((x) =>
+                        x.id === r.id ? { ...x, status: e.target.value } : x,
+                      ),
+                    )
+                  }
+                >
+                  {statuses[section].map((s) => (
+                    <option key={s} value={s}>{t(s)}</option>
+                  ))}
+                </select>
+              ) : (
+                <span>{t(r.status)}</span>
+              )}
+            </article>
+          ))}
+          {visibleRecords.length === 0 && <p>{t("No matching records.")}</p>}
         </div>}
       </div>
     </main>
   );
 }
 export function Demo() {
+  const { language, t } = useTranslation();
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.title = t("FloodBlast Dashboard");
+  }, [language, t]);
   if (window.location.pathname === "/donor") return <DonorPortal />;
   if (!sessionStorage.getItem("fb.session")) {
     return <Login enter={name => {

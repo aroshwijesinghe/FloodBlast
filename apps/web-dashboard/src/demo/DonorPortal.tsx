@@ -1,3 +1,5 @@
+import { LanguageSwitcher } from "../components/shared/LanguageSwitcher";
+import { useTranslation } from "../i18n";
 import { useState, type FormEvent } from "react";
 import { demoRequest } from "./api";
 import { ReliefBoard } from "./ReliefBoard";
@@ -9,6 +11,7 @@ type Challenge = { phone: string; demoCode: string; expiresIn: number };
 const sessionKey = "fb.demo.donor";
 
 export function DonorPortal() {
+  const { t } = useTranslation();
   const [donor, setDonor] = useState<Donor | null>(() => JSON.parse(sessionStorage.getItem(sessionKey) || "null"));
   const [phone, setPhone] = useState("+94");
   const [challenge, setChallenge] = useState<Challenge>();
@@ -48,35 +51,38 @@ export function DonorPortal() {
   return (
     <main className="workspace">
       <div className="work-body humanitarian">
-        <a className="human-link" href="/login">Operations sign-in</a>
-        <h1>Donor portal</h1>
+        <div className="donor-toolbar">
+          <a className="human-link" href="/login">{t("Operations sign-in")}</a>
+          <LanguageSwitcher />
+        </div>
+        <h1>{t("Donor portal")}</h1>
         {donor ? (
           <section className="human-panel">
-            <p>Verified demo donor</p>
+            <p>{t("Verified demo donor")}</p>
             <strong>{donor.phone}</strong>
-            <button type="button" className="human-action" onClick={signOut}>Sign out</button>
+            <button type="button" className="human-action" onClick={signOut}>{t("Sign out")}</button>
           </section>
         ) : (
           <section className="human-panel">
-            <h2>Verify your phone number</h2>
-            <p>Use a sample +94 number for this local demo. The SMS simulator displays your code here.</p>
+            <h2>{t("Verify your phone number")}</h2>
+            <p>{t("Use a sample +94 number for this local demo. The SMS simulator displays your code here.")}</p>
             <form onSubmit={submit} className="human-form">
               {challenge ? (
                 <>
-                  <p role="status">Code for {challenge.phone} · <strong>{challenge.demoCode}</strong></p>
-                  <label>Verification code
+                  <p role="status">{t("Code for {phone}", { phone: challenge.phone })} · <strong>{challenge.demoCode}</strong></p>
+                  <label>{t("Verification code")}
                     <input value={code} onChange={(event) => setCode(event.target.value)} pattern="[0-9]{6}" inputMode="numeric" autoComplete="one-time-code" required />
                   </label>
                 </>
               ) : (
-                <label>Sri Lankan mobile number
+                <label>{t("Sri Lankan mobile number")}
                   <input type="tel" value={phone} onChange={(event) => setPhone(event.target.value)} autoComplete="tel" placeholder="+94771234567" required />
                 </label>
               )}
-              {error && <p role="alert">{error}</p>}
+              {error && <p role="alert">{t(error)}</p>}
               <div className="human-actions">
-                <button className="primary" disabled={busy}>{challenge ? "Verify code" : "Get demo code"}</button>
-                {challenge && <button type="button" className="human-action" disabled={busy} onClick={() => { setChallenge(undefined); setCode(""); setError(""); }}>Change number or resend</button>}
+                <button className="primary" disabled={busy}>{t(challenge ? "Verify code" : "Get demo code")}</button>
+                {challenge && <button type="button" className="human-action" disabled={busy} onClick={() => { setChallenge(undefined); setCode(""); setError(""); }}>{t("Change number or resend")}</button>}
               </div>
             </form>
           </section>

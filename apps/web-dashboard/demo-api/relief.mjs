@@ -54,6 +54,8 @@ export function createReliefRepository() {
       return [...requests.values()]
         .filter((request) => !request.date || request.date === date ||
           (includeAllocations && pledges.some((pledge) => pledge.requestId === request.id && pledge.status !== "DELIVERED")))
+        .sort((a, b) => (a.date ?? "").localeCompare(b.date ?? "") ||
+          (a.window ?? "").localeCompare(b.window ?? ""))
         .map((request) => totals(request, includeAllocations));
     },
     history(phone) {

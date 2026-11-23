@@ -1,3 +1,4 @@
+import 'package:flood_blast/app/app_language.dart';
 import 'package:flutter/material.dart';
 import '../../../data/enums/app_enums.dart';
 
@@ -18,9 +19,9 @@ class MapFilterBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
-          _buildFilterChip('All', null),
+          _buildFilterChip(context.tr('all'), null),
           ...IncidentCategory.values.map(
-            (category) => _buildFilterChip(category.name.toUpperCase(), category),
+            (category) => _buildFilterChip(context.tr(category.name), category),
           ),
         ],
       ),

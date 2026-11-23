@@ -1,3 +1,4 @@
+import { useTranslation } from "../i18n";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { MapPin } from "lucide-react";
 import { drawMap, project, type BoundaryData, type Point } from "../DisasterMap";
@@ -29,6 +30,7 @@ function ShelterMap({ shelters, selected, onSelect }: {
   selected?: string;
   onSelect: (id: string) => void;
 }) {
+  const { t } = useTranslation();
   const frame = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const [boundaries, setBoundaries] = useState<BoundaryData>();
@@ -61,24 +63,24 @@ function ShelterMap({ shelters, selected, onSelect }: {
   useEffect(() => {
     if (width < 100 || height < 100 || !boundaries || !canvas.current) return;
     const points = shelters.map(({ point }) => project(point, width, height, home));
-    drawMap(canvas.current, boundaries, width, height, home, points);
-  }, [boundaries, width, height, shelters]);
+    drawMap(canvas.current, boundaries, width, height, home, points, t);
+  }, [boundaries, width, height, shelters, t]);
 
   return (
-    <div className="disaster-viewport shelter-map" ref={frame} role="group" aria-label="Verified shelters in Sri Lanka">
+    <div className="disaster-viewport shelter-map" ref={frame} role="group" aria-label={t("Verified shelters in Sri Lanka")}>
       <canvas ref={canvas} aria-hidden="true" />
-      {!boundaries && <span className="disaster-map-notice" role="status">{error ? "Shelter map unavailable" : "Loading shelter map…"}</span>}
+      {!boundaries && <span className="disaster-map-notice" role="status">{t(error ? "Shelter map unavailable" : "Loading shelter map…")}</span>}
       {boundaries && width > 0 && shelters.map((shelter) => {
         const [left, top] = project(shelter.point, width, height, home);
         return (
           <button type="button" key={shelter.id} className="shelter-marker" style={{ left, top }}
-            title={shelter.name} aria-label={shelter.name} aria-pressed={selected === shelter.id}
+            title={t(shelter.name)} aria-label={t(shelter.name)} aria-pressed={selected === shelter.id}
             onClick={() => onSelect(shelter.id)}>
             <MapPin size={18} aria-hidden="true" />
           </button>
         );
       })}
-      <a className="disaster-map-credit" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors</a>
+      <a className="disaster-map-credit" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">{t("© OpenStreetMap contributors")}</a>
     </div>
   );
 }
@@ -88,6 +90,7 @@ function FacilityAudit({ shelter, operator, onUpdate }: {
   operator?: string;
   onUpdate: (shelter: Shelter) => void;
 }) {
+  const { language, t } = useTranslation();
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -109,29 +112,29 @@ function FacilityAudit({ shelter, operator, onUpdate }: {
 
   return (
     <div>
-      <h4>Facility readiness</h4>
-      {shelter.auditedAt && <small>Last checked {new Date(shelter.auditedAt).toLocaleString(undefined, { timeZone: "Asia/Colombo" })}</small>}
+      <h4>{t("Facility readiness")}</h4>
+      {shelter.auditedAt && <small>{t("Last checked {date}", { date: new Date(shelter.auditedAt).toLocaleString(language, { timeZone: "Asia/Colombo" }) })}</small>}
       {editing ? (
         <form className="human-form" onSubmit={submit}>
           {facilities.map(([key, label]) => (
-            <label key={key}>{label}
+            <label key={key}>{t(label)}
               <select name={key} defaultValue={shelter.facilities[key]}>
-                {Object.entries(readiness).map(([value, text]) => <option key={value} value={value}>{text}</option>)}
+                {Object.entries(readiness).map(([value, text]) => <option key={value} value={value}>{t(text)}</option>)}
               </select>
             </label>
           ))}
-          {error && <p role="alert">{error}</p>}
+          {error && <p role="alert">{t(error)}</p>}
           <div className="human-actions">
-            <button className="primary" disabled={busy}>Save facility audit</button>
-            <button type="button" className="human-action" disabled={busy} onClick={() => setEditing(false)}>Cancel</button>
+            <button className="primary" disabled={busy}>{t("Save facility audit")}</button>
+            <button type="button" className="human-action" disabled={busy} onClick={() => setEditing(false)}>{t("Cancel")}</button>
           </div>
         </form>
       ) : (
         <>
           <dl className="facility-list">
-            {facilities.map(([key, label]) => <div key={key}><dt>{label}</dt><dd>{readiness[shelter.facilities[key]]}</dd></div>)}
+            {facilities.map(([key, label]) => <div key={key}><dt>{t(label)}</dt><dd>{t(readiness[shelter.facilities[key]])}</dd></div>)}
           </dl>
-          {operator && <button type="button" className="human-action" onClick={() => { setError(""); setEditing(true); }}>Audit facilities</button>}
+          {operator && <button type="button" className="human-action" onClick={() => { setError(""); setEditing(true); }}>{t("Audit facilities")}</button>}
         </>
       )}
     </div>
@@ -139,6 +142,7 @@ function FacilityAudit({ shelter, operator, onUpdate }: {
 }
 
 export function ShelterDirectory({ operator }: { operator?: string }) {
+  const { t } = useTranslation();
   const [shelters, setShelters] = useState<Shelter[]>();
   const [selected, setSelected] = useState("");
   const [error, setError] = useState("");
@@ -169,10 +173,10 @@ export function ShelterDirectory({ operator }: { operator?: string }) {
 
   return (
     <section className="human-panel" aria-labelledby="shelter-title">
-      <h2 id="shelter-title">Verified evacuation shelters</h2>
-      <p>{live ? "Live occupancy updates connected" : "Waiting for live occupancy updates"}</p>
-      {error && <p role="alert">{error}</p>}
-      {!error && !shelters && <p role="status">Loading shelters…</p>}
+      <h2 id="shelter-title">{t("Verified evacuation shelters")}</h2>
+      <p>{t(live ? "Live occupancy updates connected" : "Waiting for live occupancy updates")}</p>
+      {error && <p role="alert">{t(error)}</p>}
+      {!error && !shelters && <p role="status">{t("Loading shelters…")}</p>}
       {shelters && (
         <div className="shelter-layout">
           <ShelterMap shelters={shelters} selected={shelter?.id} onSelect={setSelected} />
@@ -181,14 +185,14 @@ export function ShelterDirectory({ operator }: { operator?: string }) {
               {shelters.map(({ id, name, district }) => (
                 <li key={id}>
                   <button type="button" className="human-action" aria-pressed={shelter?.id === id} onClick={() => setSelected(id)}>
-                    <MapPin size={16} aria-hidden="true" /><span><strong>{name}</strong><br />{district}</span>
+                    <MapPin size={16} aria-hidden="true" /><span><strong>{t(name)}</strong><br />{t(district)}</span>
                   </button>
                 </li>
               ))}
             </ul>
             {shelter && <article className="human-card shelter-detail">
-              <h3>{shelter.name}</h3>
-              <p>{shelter.district} · Verified shelter</p>
+              <h3>{t(shelter.name)}</h3>
+              <p>{t(shelter.district)} · {t("Verified shelter")}</p>
               <Occupancy key={shelter.id} shelter={shelter} operator={operator} onUpdate={onUpdate} />
               <FacilityAudit key={shelter.id} shelter={shelter} operator={operator} onUpdate={onUpdate} />
               {operator && <ShelterNeeds key={shelter.id} shelter={shelter} operator={operator} />}
@@ -205,6 +209,7 @@ function Occupancy({ shelter, operator, onUpdate }: {
   operator?: string;
   onUpdate: (shelter: Shelter) => void;
 }) {
+  const { t } = useTranslation();
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -230,20 +235,20 @@ function Occupancy({ shelter, operator, onUpdate }: {
 
   return (
     <div className="relief-progress">
-      <h4>Occupancy</h4>
-      <progress max={shelter.capacity} value={Math.min(shelter.capacity, shelter.occupancy)} aria-label="Shelter occupancy" />
-      <p>{shelter.occupancy} of {shelter.capacity} places occupied · {free < 0 ? `${-free} over capacity` : `${free} available`}</p>
+      <h4>{t("Occupancy")}</h4>
+      <progress max={shelter.capacity} value={Math.min(shelter.capacity, shelter.occupancy)} aria-label={t("Shelter occupancy")} />
+      <p>{t("{used} of {capacity} places occupied", { used: shelter.occupancy, capacity: shelter.capacity })} · {free < 0 ? t("{count} over capacity", { count: -free }) : t("{count} available", { count: free })}</p>
       {editing ? (
         <form className="human-form" onSubmit={submit}>
-          <label>Capacity<input required name="capacity" type="number" min="1" max="100000" defaultValue={shelter.capacity} /></label>
-          <label>Current occupancy<input required name="occupancy" type="number" min="0" max="100000" defaultValue={shelter.occupancy} /></label>
-          {error && <p role="alert">{error}</p>}
+          <label>{t("Capacity")}<input required name="capacity" type="number" min="1" max="100000" defaultValue={shelter.capacity} /></label>
+          <label>{t("Current occupancy")}<input required name="occupancy" type="number" min="0" max="100000" defaultValue={shelter.occupancy} /></label>
+          {error && <p role="alert">{t(error)}</p>}
           <div className="human-actions">
-            <button className="primary" disabled={busy}>Save occupancy</button>
-            <button type="button" className="human-action" disabled={busy} onClick={() => setEditing(false)}>Cancel</button>
+            <button className="primary" disabled={busy}>{t("Save occupancy")}</button>
+            <button type="button" className="human-action" disabled={busy} onClick={() => setEditing(false)}>{t("Cancel")}</button>
           </div>
         </form>
-      ) : operator && <button type="button" className="human-action" onClick={() => { setError(""); setEditing(true); }}>Update occupancy</button>}
+      ) : operator && <button type="button" className="human-action" onClick={() => { setError(""); setEditing(true); }}>{t("Update occupancy")}</button>}
     </div>
   );
 }

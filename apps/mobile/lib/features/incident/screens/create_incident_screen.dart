@@ -1,3 +1,5 @@
+import 'package:flood_blast/shared/widgets/language_switcher.dart';
+import 'package:flood_blast/app/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -46,7 +48,7 @@ class _CreateIncidentScreenState extends State<CreateIncidentScreen> {
   void _submit() {
     if (_selectedCategory == null || _descController.text.isEmpty || _images.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please complete category, description, and at least 1 image.')),
+        SnackBar(content: Text(context.tr('missingReportDetails'))),
       );
       return;
     }
@@ -81,7 +83,7 @@ class _CreateIncidentScreenState extends State<CreateIncidentScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('Report Incident')),
+        appBar: AppBar(title: Text(context.tr('reportIncident')), actions: const [LanguageSwitcher()]),
         body: Stepper(
           currentStep: _currentStep,
           onStepContinue: () {
@@ -100,13 +102,13 @@ class _CreateIncidentScreenState extends State<CreateIncidentScreen> {
           },
           steps: [
             Step(
-              title: const Text('Category'),
+              title: Text(context.tr('category')),
               content: DropdownButtonFormField<IncidentCategory>(
                 value: _selectedCategory,
                 items: IncidentCategory.values.map((cat) {
                   return DropdownMenuItem(
                     value: cat,
-                    child: Text(cat.name.toUpperCase()),
+                    child: Text(context.tr(cat.name)),
                   );
                 }).toList(),
                 onChanged: (val) => setState(() => _selectedCategory = val),
@@ -114,26 +116,26 @@ class _CreateIncidentScreenState extends State<CreateIncidentScreen> {
               isActive: _currentStep >= 0,
             ),
             Step(
-              title: const Text('Description & Voice'),
+              title: Text(context.tr('descriptionVoice')),
               content: Column(
                 children: [
                   TextField(
                     controller: _descController,
                     maxLines: 3,
-                    decoration: const InputDecoration(hintText: 'Describe the situation...'),
+                    decoration: InputDecoration(hintText: context.tr('describe')),
                   ),
                 ],
               ),
               isActive: _currentStep >= 1,
             ),
             Step(
-              title: const Text('Images'),
+              title: Text(context.tr('images')),
               content: Column(
                 children: [
                   ElevatedButton.icon(
                     onPressed: _pickImage,
                     icon: const Icon(Icons.camera_alt),
-                    label: const Text('Take Photo'),
+                    label: Text(context.tr('takePhoto')),
                   ),
                   Wrap(
                     spacing: 8,
@@ -144,18 +146,18 @@ class _CreateIncidentScreenState extends State<CreateIncidentScreen> {
               isActive: _currentStep >= 2,
             ),
             Step(
-              title: const Text('Victim Details'),
-              content: const Text('Counters for vulnerable groups...'),
+              title: Text(context.tr('victimDetails')),
+              content: Text(context.tr('groupCounts')),
               isActive: _currentStep >= 3,
             ),
             Step(
-              title: const Text('Contact Details'),
-              content: const Text('Optional exposure details...'),
+              title: Text(context.tr('contactDetails')),
+              content: Text(context.tr('exposureDetails')),
               isActive: _currentStep >= 4,
             ),
             Step(
-              title: const Text('Review'),
-              content: const Text('Review and submit.'),
+              title: Text(context.tr('review')),
+              content: Text(context.tr('reviewSubmit')),
               isActive: _currentStep >= 5,
             ),
           ],

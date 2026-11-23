@@ -1,3 +1,4 @@
+import { useTranslation } from "../i18n";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { demoRequest } from "./api";
 import "./humanitarian.css";
@@ -28,13 +29,14 @@ export type ReliefRequest = {
 };
 
 function ReliefProgress({ request }: { request: ReliefRequest }) {
+  const { t } = useTranslation();
   return (
     <div className="relief-progress">
-      <progress max={request.required} value={request.pledged} aria-label={`${request.name} pledged quantity`} />
+      <progress max={request.required} value={request.pledged} aria-label={t("{name} pledged quantity", { name: t(request.name) })} />
       <dl>
-        <div><dt>Required</dt><dd>{request.required}</dd></div>
-        <div><dt>Pledged</dt><dd>{request.pledged}</dd></div>
-        <div><dt>Remaining</dt><dd>{request.remaining}</dd></div>
+        <div><dt>{t("Required")}</dt><dd>{request.required}</dd></div>
+        <div><dt>{t("Pledged")}</dt><dd>{request.pledged}</dd></div>
+        <div><dt>{t("Remaining unmet")}</dt><dd>{request.remaining}</dd></div>
       </dl>
     </div>
   );
@@ -45,9 +47,10 @@ function PledgeForm({ request, token, onUpdate }: {
   token: string;
   onUpdate: (updated: ReliefRequest) => void;
 }) {
+  const { t } = useTranslation();
   const [quantity, setQuantity] = useState("");
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState("");
+  const [pledgedQuantity, setPledgedQuantity] = useState("");
   const [error, setError] = useState("");
   const submission = useRef<{ quantity: number; id: string }>();
 
@@ -55,7 +58,7 @@ function PledgeForm({ request, token, onUpdate }: {
     event.preventDefault();
     setBusy(true);
     setError("");
-    setMessage("");
+    setPledgedQuantity("");
     const amount = Number(quantity);
     if (submission.current?.quantity !== amount) {
       submission.current = { quantity: amount, id: crypto.randomUUID() };
@@ -65,7 +68,7 @@ function PledgeForm({ request, token, onUpdate }: {
         body: { requestId: request.id, quantity: amount, submissionId: submission.current.id },
         token,
       });
-      setMessage(`Pledged ${quantity} ${request.unit}.`);
+      setPledgedQuantity(quantity);
       onUpdate(updated);
       setQuantity("");
       submission.current = undefined;
@@ -79,21 +82,22 @@ function PledgeForm({ request, token, onUpdate }: {
   return (
     <form className="human-form" onSubmit={submit}>
       {request.remaining > 0 && <>
-        <label>Quantity to pledge
+        <label>{t("Quantity to pledge")}
           <input type="number" value={quantity} onChange={(event) => setQuantity(event.target.value)} min="1" max={request.remaining} step="1" required />
         </label>
         <div className="human-actions">
-          <button className="primary" disabled={busy}>Confirm pledge</button>
-          <button className="human-action" type="button" onClick={() => setQuantity(String(request.remaining))}>Use remaining quantity</button>
+          <button className="primary" disabled={busy}>{t("Confirm pledge")}</button>
+          <button className="human-action" type="button" onClick={() => setQuantity(String(request.remaining))}>{t("Use remaining quantity")}</button>
         </div>
       </>}
-      {error && <p role="alert">{error}</p>}
-      {message && <p role="status">{message}</p>}
+      {error && <p role="alert">{t(error)}</p>}
+      {pledgedQuantity && <p role="status">{t("Pledged {quantity} {unit}.", { quantity: pledgedQuantity, unit: t(request.unit) })}</p>}
     </form>
   );
 }
 
 export function ReliefBoard({ token, operator, onPledge }: { token?: string; operator?: string; onPledge?: () => void }) {
+  const { t } = useTranslation();
   const [requests, setRequests] = useState<ReliefRequest[]>([]);
   const [queue, setQueue] = useState("food");
   const [error, setError] = useState("");
@@ -132,31 +136,31 @@ export function ReliefBoard({ token, operator, onPledge }: { token?: string; ope
 
   return (
     <section className="human-panel" aria-labelledby="relief-title">
-      <h2 id="relief-title">Relief requests</h2>
-      {error && <p role="alert">{error}</p>}
-      {!token && <a className="human-link" href="/donor">Verify your phone to pledge</a>}
-      <div className="human-actions human-queues" role="group" aria-label="Relief categories">
+      <h2 id="relief-title">{t("Relief requests")}</h2>
+      {error && <p role="alert">{t(error)}</p>}
+      {!token && <a className="human-link" href="/donor">{t("Verify your phone to pledge")}</a>}
+      <div className="human-actions human-queues" role="group" aria-label={t("Relief categories")}>
         {queues.map(({ id, label }) => (
-          <button className="human-action" type="button" key={id} aria-pressed={queue === id} onClick={() => setQueue(id)}>{label}</button>
+          <button className="human-action" type="button" key={id} aria-pressed={queue === id} onClick={() => setQueue(id)}>{t(label)}</button>
         ))}
       </div>
       <div className="human-grid">
         {requests.filter((request) => request.category === queue).map((request) => (
           <article className="human-card" key={request.id}>
-            {request.meal && <small>{request.window} · {request.date} · Sri Lanka time</small>}
-            <h3>{request.name}</h3>
-            <p>{request.district} · {request.unit}</p>
-            {request.destination && <p>{request.destination}</p>}
-            <small>{request.status.replace(/_/g, " ")}</small>
+            {request.meal && <small>{request.window} · {request.date} · {t("Sri Lanka time")}</small>}
+            <h3>{t(request.name)}</h3>
+            <p>{t(request.district)} · {t(request.unit)}</p>
+            {request.destination && <p>{t(request.destination)}</p>}
+            <small>{t(request.status.replace(/_/g, " "))}</small>
             <ReliefProgress request={request} />
             {token && <PledgeForm request={request} token={token} onUpdate={update} />}
             {operator && request.remaining === 0 && request.allocations?.map((allocation) => (
               <div className="human-actions" key={allocation.id}>
-                <small>{allocation.quantity} {request.unit} · {allocation.status.replace(/_/g, " ")}</small>
+                <small>{allocation.quantity} {t(request.unit)} · {t(allocation.status.replace(/_/g, " "))}</small>
                 {allocation.status !== "DELIVERED" && (
                   <button type="button" className="human-action" disabled={advancing} onClick={() => advance(
                     allocation.id, allocation.status === "PLEDGED" ? "IN_TRANSIT" : "DELIVERED",
-                  )}>{allocation.status === "PLEDGED" ? "Mark in transit" : "Confirm delivery"}</button>
+                  )}>{t(allocation.status === "PLEDGED" ? "Mark in transit" : "Confirm delivery")}</button>
                 )}
               </div>
             ))}
